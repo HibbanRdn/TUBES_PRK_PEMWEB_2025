@@ -46,7 +46,7 @@ jobs:
           fi
 
           base=${folder##*/}
-          number=$(echo "$base" | grep -o "[0-9][0-9]")  # Perbaikan: ekstrak angka saja
+          number=$(echo "$base" | grep -o "[0-9][0-9]")
 
           echo "folder=$folder" >> $GITHUB_OUTPUT
           echo "group=$base" >> $GITHUB_OUTPUT
@@ -58,6 +58,21 @@ jobs:
           count=$(echo "${{ steps.changes.outputs.files }}" | grep -o "kelompok/kelompok_[0-9][0-9]" | sort | uniq | wc -l)
           if [ "$count" -ne 1 ]; then
             echo "PR hanya boleh mengubah satu folder kelompok."
+            exit 1
+          fi
+
+      - name: Validate README.md inside kelompok folder
+        run: |
+          folder="${{ steps.detect.outputs.folder }}"
+          readme="$folder/README.md"
+
+          if [ ! -f "$readme" ]; then
+            echo "README.md wajib ada di dalam folder kelompok: $readme"
+            exit 1
+          fi
+
+          if [ ! -s "$readme" ]; then
+            echo "README.md ditemukan tetapi kosong. Harus berisi data anggota & summary."
             exit 1
           fi
 
@@ -82,9 +97,11 @@ jobs:
 
             Ada kesalahan pada struktur pengumpulan Tugas Besar.
 
-            Silakan perbaiki berdasarkan pesan error di atas:
-            - Pastikan folder kelompok menggunakan format `kelompok_XX`
-            - Pastikan hanya mengubah satu folder kelompok
-            - Pastikan struktur `src/` sudah lengkap (index.html, style.css, script.js)
+            Periksa kembali:
+            - Folder kelompok harus `kelompok_XX`
+            - Hanya boleh mengubah satu folder kelompok
+            - Harus ada README.md berisi:
+              - Daftar anggota kelompok
+              - Summary project
 
-            Setelah diperbaiki, push ulang perubahan agar CI berjalan lagi.
+            Perbaiki lalu push ulang.

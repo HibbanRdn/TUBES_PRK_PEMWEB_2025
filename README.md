@@ -1,190 +1,175 @@
-# FINAL PROJECT
+# 🔥 FINAL PROJECT
 
 ## Praktikum Pemrograman Web
 
-Laboratorium Teknik Komputer – Universitas Lampung
+### Laboratorium Teknik Komputer — Universitas Lampung
 
-Repositori ini digunakan sebagai **Tempat pengumpulan Tugas Besar Praktikum Pemrograman Web**.
+![Status](https://img.shields.io/badge/CI-Structure%20Check-blue)
+![PRs](https://img.shields.io/badge/PR-Welcome-green)
+![GitHub](https://img.shields.io/badge/GitHub-Repository-black)
 
-Setiap kelompok wajib mengikuti seluruh aturan dan struktur folder dalam dokumen ini.
+Repositori ini digunakan sebagai **Tempat Pengumpulan Tugas Besar Praktikum Pemrograman Web**.  
+Setiap kelompok **WAJIB** mengikuti aturan, struktur folder, dan mekanisme CI yang berlaku.
 
 ---
 
-## 1. Mekanisme Pengumpulan
+## 📝 1. Mekanisme Pengumpulan
 
-1. Lakukan **fork** repository ini ke akun GitHub ketua kelompok.
-2. Di dalam repository hasil fork, buat folder kelompok dengan format:
+### **1. Fork Repository**
+
+Setiap ketua kelompok melakukan **fork** repository ini.
+
+### **2. Buat Folder Kelompok**
+
+Gunakan format:
 
 ```bash
 kelompok/kelompok_XX/
 ```
 
-Contoh untuk kelompok 4:
+Contoh:
 
-```
-
+```bash
 kelompok/kelompok_04/
-
 ```
 
-3. Di dalam folder kelompok tersebut, buat struktur wajib:
+### **3. Struktur Wajib di Dalam Folder Kelompok**
 
-```
-
+```bash
 kelompok_04/
-└── src/
-    └── index.html
-    └── style.css
-    └── script.js
-    *README.md
+└── README.md # Dokumentasi + anggota kelompok
 ```
 
-> \*README.md ini berisi tentang dokumentasi proyek dan anggota kelompok
+> **README.md wajib berisi:**
+>
+> - Daftar anggota
+> - Judul & summary project
+> - Cara menjalankan aplikasi
 
-4. Push seluruh pekerjaan ke repository fork.
+### **4. Push Perubahan ke Repo Fork**
 
-5. Buat **Pull Request (PR)** ke repository utama dengan format judul:
+### **5. Buat Pull Request**
+
+Format judul PR:
 
 ```
+
 [Kelompok-04] Nama Proyek
 
 ```
 
-6. PR akan dicek otomatis oleh **CI** untuk memastikan:
+### **6. PR Akan Dicek Oleh CI**
 
-- Struktur folder benar
+CI memverifikasi:
+
+- Struktur folder sesuai format
+- Hanya mengubah folder kelompok sendiri
 - File wajib tersedia
-- Tidak menyentuh folder kelompok lain
-- Tidak mengubah file di luar direktori yang diizinkan
+- README tidak kosong
+- Tidak menyentuh folder/berkas milik kelompok lain
+
+Jika salah → **CI otomatis gagal & memberikan komentar.**
 
 ---
 
-## 2. Tema Final Project (pilih satu)
+## 🎯 2. Tema Final Project (pilih satu)
 
-Berdasarkan dokumen resmi Final Project Praktikum Pemrograman Web:
-
-1. **Good Governance**
-   Sistem layanan publik, perizinan, layanan sosial, pajak, dan transparansi pemerintahan.
-
-2. **Innovation in Health**
-   Telemedicine, rekam medis elektronik, jadwal dokter, klaim asuransi kesehatan, monitoring kesehatan.
-
-3. **Innovation in Education**
-   E-learning, platform pembelajaran interaktif, aplikasi edukasi anak.
-
-4. **Digital Transformation for SMEs (UMKM)**
-   Marketplace lokal, POS, inventori, kasir digital, promosi produk UMKM.
-
-5. **Community & Organization Management**
-   Sistem keanggotaan, event management, donasi, forum, voting, koordinasi kegiatan.
-
-6. **Smart City & Environment**
-   Pelaporan infrastruktur, kualitas udara, manajemen sampah, parkir pintar, transportasi publik.
+| No  | Tema                                    | Deskripsi Singkat                        |
+| --- | --------------------------------------- | ---------------------------------------- |
+| 1   | **Good Governance**                     | Layanan publik, perizinan, sosial, pajak |
+| 2   | **Innovation in Health**                | Telemedicine, rekam medis, jadwal dokter |
+| 3   | **Innovation in Education**             | E-learning, aplikasi edukasi             |
+| 4   | **Digital Transformation for SMEs**     | POS, marketplace, inventori              |
+| 5   | **Community & Organization Management** | Sistem komunitas, voting, donasi         |
+| 6   | **Smart City & Environment**            | Pelaporan infrastruktur, lingkungan      |
 
 ---
 
-## 3. Ketentuan Umum
+## ⚙️ 3. Ketentuan Umum
 
-### Persyaratan Teknis
+### **Persyaratan Teknis**
 
 - **Frontend:**
-  HTML5, CSS3 (Native/Bootstrap/Tailwind), JavaScript Native
-  _(Tidak diperbolehkan menggunakan framework JS seperti React/Vue/Angular)_
+  HTML5, CSS3 (Native/Tailwind/Bootstrap), JavaScript Native
+  _Tidak boleh memakai framework JS (React/Vue/Angular)._
 
-- **Backend:**
-  PHP Native _(tanpa framework seperti Laravel/CodeIgniter)_
+- **Backend:** PHP Native
+- **Database:** MySQL
 
-- **Database:**
-  MySQL
-  Wajib menyediakan:
-- File SQL schema
-- ERD (Entity Relationship Diagram)
+  - Wajib menyediakan ERD & SQL schema
 
-- **Version Control:**
-  Git & GitHub
+- **Version Control:** Git & GitHub
 
 ---
 
-## 4. Fitur Wajib
+## 🚀 4. Fitur Wajib
 
-### 1. User Management
+### **1. User Management**
 
-- Registrasi akun
 - Login
 - Logout
-- Manajemen role / hak akses
+- Registrasi
+- Role / hak akses
 
-### 2. Transaksi atau Layanan Utama Sesuai Tema
+### **2. Fitur Transaksi/Layanan**
 
 Contoh:
 
-- CRUD data layanan
-- Pemrosesan transaksi
-- Pengajuan dan pelaporan data
-- Validasi dan manajemen alur layanan
+- CRUD data
+- Proses transaksi
+- Validasi data
+- Pelaporan
 
 ---
 
-## 5. Deliverables (Wajib Dikumpulkan)
+## 📦 5. Deliverables
 
-Setiap kelompok harus mengumpulkan:
+Setiap kelompok wajib mengumpulkan:
 
-1. **Repository GitHub** berisi:
-
-- Seluruh source code dalam folder `src/`
-- Struktur folder sesuai ketentuan
-
-2. **File SQL** (schema database)
-
-3. **ERD** lengkap (format bebas: PNG/JPG/PDF)
-
-4. **Screenshot tampilan aplikasi**
-
-5. **README.md** pada folder kelompok berisi:
-
-- Cara instalasi
-- Cara menjalankan aplikasi
-- Dokumentasi singkat fitur
-
-6. **Presentasi & Demo Final Project**
+- Source code lengkap pada folder `src/`
+- File SQL database
+- ERD (PNG/JPG/PDF)
+- Screenshot aplikasi
+- README.md dalam folder kelompok:
+  - Instalasi & cara menjalankan
+  - Dokumentasi singkat
+- Presentasi & demo (opsional)
 
 ---
 
-## 6. Struktur Repo
+## 📁 6. Struktur Repo
 
-```
+```bash
 TUBES_PRK_PEMWEB_2025/
 │
 ├── README.md
 ├── .github/
 │ └── workflows/
-│     └── format-check.yml # CI untuk validasi PR
+│ └── format-check.yml
 │
 └── kelompok/
-    └── kelompok_01/ # contoh (opsional)
-
+      └── kelompok_01/
 ```
 
-Setiap kelompok hanya boleh mengubah folder mereka sendiri.
+---
+
+## ⚠️ 7. Aturan Tambahan
+
+- Dilarang mengubah folder kelompok lain
+- Dilarang membuat folder di luar `kelompok/`
+- Nama folder tidak boleh diganti setelah dibuat
+- PR dengan struktur salah akan ditolak CI
 
 ---
 
-## 7. Aturan Tambahan
+## 📞 8. Kontak Resmi
 
-- Tidak boleh mengubah folder milik kelompok lain.
-- Tidak boleh membuat folder di luar `kelompok/`.
-- Tidak boleh mengganti nama folder kelompok setelah dibuat.
-- PR dengan struktur salah akan otomatis ditolak oleh CI.
+Silakan hubungi Asisten Praktikum jika ada kendala teknis terkait CI atau mekanisme pengumpulan.
 
 ---
 
-## 8. Kontak Resmi
+### 🎉 Selamat mengerjakan!
 
-Silakan hubungi asisten praktikum bila terjadi kendala teknis terkait mekanisme pengumpulan atau CI.
+Gunakan Git dengan baik, commit secara bertahap, dan kerjakan proyek dengan rapi.
 
----
-
-Selamat mengerjakan.
-Gunakan Git dengan baik, commit secara bertahap, dan kerjakan dengan rapi.
-
-> Laboratorium Teknik Komputer – Universitas Lampung
+> Laboratorium Teknik Komputer — Universitas Lampung
