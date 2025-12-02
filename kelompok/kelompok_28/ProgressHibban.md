@@ -12,7 +12,7 @@ Saya telah melakukan inisiasi awal proyek untuk memastikan kita tidak mulai dari
 ### **A. Branch Baru & Workflow**
 * **Status:** ✅ **DONE**
 * **Keterangan:**
-  Saya tidak langsung melakukan *push* ke branch `main` untuk menjaga kerapian kode utama. Saya telah membuat branch pengembangan baru (contoh: `dev-core` atau `feat/initial-structure`).
+  Saya tidak langsung melakukan *push* ke branch `main` untuk menjaga kerapian kode utama. Saya telah membuat branch pengembangan baru (contoh: `dev-core` atau `feat/auth-setup`).
 * **Action untuk Tim:**
   Silakan **checkout** ke branch tersebut untuk melihat struktur folder terbaru sebelum mulai mengerjakan bagian masing-masing.
 
