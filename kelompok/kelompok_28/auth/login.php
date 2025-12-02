@@ -210,6 +210,53 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
                 </div>
             <?php endif; ?>
 
+            <?php if (isset($_GET['reset']) && $_GET['reset'] == 'success'): ?>
+                <div id="toast-success" class="fixed top-5 right-5 z-50 flex items-center w-full max-w-sm p-4 mb-4 text-gray-500 bg-white rounded-xl shadow-2xl border-l-4 border-green-500 animate-slideInLeft" role="alert">
+                    <div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-green-500 bg-green-100 rounded-lg">
+                        <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
+                        </svg>
+                        <span class="sr-only">Check icon</span>
+                    </div>
+                    
+                    <div class="ml-3 text-sm font-normal">
+                        <span class="mb-1 text-sm font-semibold text-gray-900 block">Berhasil!</span>
+                        <div class="text-sm font-normal">Password berhasil direset. Silakan login.</div>
+                    </div>
+                    
+                    <button type="button" class="ml-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8" aria-label="Close" onclick="dismissToast()">
+                        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <script>
+                    function dismissToast() {
+                        const toast = document.getElementById('toast-success');
+                        if (toast) {
+                            toast.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
+                            toast.style.opacity = '0';
+                            toast.style.transform = 'translateX(100%)'; 
+                            setTimeout(() => toast.remove(), 500);
+                        }
+                    }
+                    // Auto-close toast setelah 5 detik
+                    setTimeout(dismissToast, 5000);
+                </script>
+            <?php endif; ?>
+
+            <?php if (isset($_GET['registered']) && $_GET['registered'] == 'success'): ?>
+                <div class="flex items-center p-4 mb-6 text-sm text-green-800 border border-green-300 rounded-xl bg-green-50 animate-fadeInUp shadow-sm" role="alert">
+                    <svg class="flex-shrink-0 inline w-5 h-5 me-3" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
+                    </svg>
+                    <div>
+                        <span class="font-bold">Registrasi Berhasil!</span> Silakan login dengan akun baru Anda.
+                    </div>
+                </div>
+            <?php endif; ?>
+
             <form action="process_login.php" method="POST" class="space-y-6" id="loginForm">
                 <div class="space-y-2">
                     <label for="username" class="block text-sm font-semibold text-gray-700">Username</label>
@@ -304,41 +351,5 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
     </script>
 </body>
 
-<?php if (isset($_GET['reset']) && $_GET['reset'] == 'success'): ?>
-    <div id="toast-success" class="fixed top-5 right-5 z-50 flex items-center w-full max-w-sm p-4 mb-4 text-gray-500 bg-white rounded-xl shadow-2xl border-l-4 border-green-500 animate-slideInLeft" role="alert">
-        <div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-green-500 bg-green-100 rounded-lg">
-            <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
-            </svg>
-            <span class="sr-only">Check icon</span>
-        </div>
-        
-        <div class="ml-3 text-sm font-normal">
-            <span class="mb-1 text-sm font-semibold text-gray-900 block">Berhasil!</span>
-            <div class="text-sm font-normal">Password berhasil direset. Silakan login.</div>
-        </div>
-        
-        <button type="button" class="ml-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8" aria-label="Close" onclick="dismissToast()">
-            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-            </svg>
-        </button>
-    </div>
-
-    <script>
-        function dismissToast() {
-            const toast = document.getElementById('toast-success');
-            if (toast) {
-                toast.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
-                toast.style.opacity = '0';
-                toast.style.transform = 'translateX(100%)'; // Geser ke kanan saat hilang
-                setTimeout(() => toast.remove(), 500);
-            }
-        }
-
-        // Auto-close setelah 5 detik
-        setTimeout(dismissToast, 5000);
-    </script>
-<?php endif; ?>
 
 </html>
