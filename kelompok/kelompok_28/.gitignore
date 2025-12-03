@@ -1,0 +1,3 @@
+# Abaikan file konfigurasi sensitif/password/api/dll yang tidak boleh diunggah ke repo
+config/smtp_secrets.php
+.ds_store
