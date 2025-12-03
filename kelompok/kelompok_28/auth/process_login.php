@@ -43,7 +43,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 // atau ambil toko pertama jika single-store:
                 // $_SESSION['store_id'] = ... (opsional)
 
-                header("Location: ../pages/dashboard.php");
+                header("Location: ../redirect.php");
                 exit;
             } else {
                 // Password salah (untuk owner)
