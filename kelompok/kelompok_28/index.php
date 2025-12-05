@@ -196,7 +196,7 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
     </main>
 
     <footer class="w-full p-6 text-center text-xs text-gray-400 animate-fadeInUp relative z-10">
-        &copy; 2025 DigiNiaga POS System. All rights reserved.
+        &copy; 2025 DigiNiaga System. All rights reserved.
     </footer>
 
 </body>

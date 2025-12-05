@@ -172,7 +172,7 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
         </div>
 
         <div class="relative z-10 flex items-center justify-between text-blue-300 text-xs">
-            <span>&copy; 2025 Kelompok 28. All rights reserved.</span>
+            <span>&copy; 2025 DigiNiaga System. All rights reserved.</span>
             <div class="flex space-x-4">
                 <a href="#" class="hover:text-white transition-colors">Privacy</a>
                 <a href="#" class="hover:text-white transition-colors">Terms</a>
@@ -230,20 +230,6 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
                         </svg>
                     </button>
                 </div>
-
-                <script>
-                    function dismissToast() {
-                        const toast = document.getElementById('toast-success');
-                        if (toast) {
-                            toast.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
-                            toast.style.opacity = '0';
-                            toast.style.transform = 'translateX(100%)'; 
-                            setTimeout(() => toast.remove(), 500);
-                        }
-                    }
-                    // Auto-close toast setelah 5 detik
-                    setTimeout(dismissToast, 5000);
-                </script>
             <?php endif; ?>
 
             <?php if (isset($_GET['registered']) && $_GET['registered'] == 'success'): ?>
@@ -349,7 +335,5 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
             input.addEventListener('blur', function() { this.parentElement.classList.remove('scale-[1.02]'); });
         });
     </script>
-</body>
-
-
+    </body>
 </html>

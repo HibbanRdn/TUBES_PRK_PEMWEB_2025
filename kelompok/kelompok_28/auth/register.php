@@ -107,7 +107,7 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
         </div>
 
         <div class="relative z-10 text-blue-300 text-xs">
-            &copy; 2025 DigiNiaga System.
+            &copy; 2025 DigiNiaga System.  All rights reserved.
         </div>
     </div>
 
