@@ -19,7 +19,7 @@ switch ($role) {
         break;
 
     case 'admin_gudang':
-        header("Location: pages/admin/dashboard.php");
+        header("Location: pages/admin_gudang/inventory.php");
         break;
 
     case 'kasir':
