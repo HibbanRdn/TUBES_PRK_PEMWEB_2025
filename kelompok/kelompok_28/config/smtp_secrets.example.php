@@ -1,6 +1,5 @@
 <?php
-// config/smtp_secrets.example.php
-// Rename file ini menjadi smtp_secrets.php dan isi dengan data asli
+// Template SMTP Secrets
 
 define('SMTP_HOST', 'smtp.gmail.com');
 define('SMTP_USER', 'email@gmail.com');
