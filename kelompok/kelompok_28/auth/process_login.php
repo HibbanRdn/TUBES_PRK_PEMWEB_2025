@@ -82,7 +82,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $_SESSION['role'] = $role; // 'admin_gudang' atau 'kasir'
                 $_SESSION['fullname'] = $fullname;
 
-                header("Location: ../pages/dashboard.php");
+                header("Location: ../redirect.php");
                 exit;
             } else {
                 header("Location: login.php?error=invalid");
