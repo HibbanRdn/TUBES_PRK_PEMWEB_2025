@@ -1,88 +1,7 @@
-<?php
-session_start();
-require_once '../../config/database.php';
-
-// 1. Cek Login & Role Owner
-if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true || $_SESSION['role'] !== 'owner') {
-    header("Location: ../../auth/login.php");
-    exit;
-}
-
-$fullname = $_SESSION['fullname'];
-$owner_id = $_SESSION['user_id'];
-
-// 2. Ambil Store ID milik Owner
-$sql_store = "SELECT id, name, address FROM stores WHERE owner_id = ? LIMIT 1";
-$stmt = mysqli_prepare($conn, $sql_store);
-mysqli_stmt_bind_param($stmt, "i", $owner_id);
-mysqli_stmt_execute($stmt);
-$res_store = mysqli_stmt_get_result($stmt);
-$store = mysqli_fetch_assoc($res_store);
-
-// Default values
-$store_id = $store['id'] ?? 0;
-$store_name = $store['name'] ?? 'Nama Toko';     // Default jika belum ada
-$store_address = $store['address'] ?? 'Alamat';  // Default jika belum ada
-$has_store = ($store_id > 0); 
-
-// Inisialisasi variabel
-$omzet_today = 0;
-$trx_count = 0;
-$low_stock = 0;
-$recent_trx = [];
-$chart_labels = [];
-$chart_data = [];
-
-// 3. Hanya Jalankan Query Berat JIKA Toko Sudah Ada
-if ($has_store) {
-    // A. Hitung Omzet & Transaksi Hari Ini
-    $today = date('Y-m-d');
-    $sql_today = "SELECT SUM(total_price) as omzet, COUNT(id) as total_trx 
-                  FROM transactions 
-                  WHERE store_id = ? AND DATE(date) = ?";
-    $stmt = mysqli_prepare($conn, $sql_today);
-    mysqli_stmt_bind_param($stmt, "is", $store_id, $today);
-    mysqli_stmt_execute($stmt);
-    $res_today = mysqli_stmt_get_result($stmt);
-    $data_today = mysqli_fetch_assoc($res_today);
-    
-    $omzet_today = $data_today['omzet'] ?? 0;
-    $trx_count = $data_today['total_trx'] ?? 0;
-
-    // B. Hitung Stok Menipis
-    $sql_stock = "SELECT COUNT(id) as low_count FROM products WHERE store_id = ? AND stock < 5";
-    $stmt = mysqli_prepare($conn, $sql_stock);
-    mysqli_stmt_bind_param($stmt, "i", $store_id);
-    mysqli_stmt_execute($stmt);
-    $low_stock = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt))['low_count'];
-
-    // C. Ambil 5 Transaksi Terakhir
-    $sql_recent = "SELECT t.invoice_code, t.date, t.total_price, e.fullname as kasir 
-                   FROM transactions t
-                   JOIN employees e ON t.employee_id = e.id
-                   WHERE t.store_id = ? 
-                   ORDER BY t.date DESC LIMIT 5";
-    $stmt = mysqli_prepare($conn, $sql_recent);
-    mysqli_stmt_bind_param($stmt, "i", $store_id);
-    mysqli_stmt_execute($stmt);
-    $recent_trx = mysqli_stmt_get_result($stmt);
-
-    // D. Data Grafik (7 Hari Terakhir)
-    for ($i = 6; $i >= 0; $i--) {
-        $date_loop = date('Y-m-d', strtotime("-$i days"));
-        $day_name = date('D', strtotime($date_loop));
-        
-        $sql_chart = "SELECT SUM(total_price) as total FROM transactions WHERE store_id = ? AND DATE(date) = ?";
-        $stmt = mysqli_prepare($conn, $sql_chart);
-        mysqli_stmt_bind_param($stmt, "is", $store_id, $date_loop);
-        mysqli_stmt_execute($stmt);
-        $res_chart = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
-        
-        $days_indo = ['Sun'=>'Min', 'Mon'=>'Sen', 'Tue'=>'Sel', 'Wed'=>'Rab', 'Thu'=>'Kam', 'Fri'=>'Jum', 'Sat'=>'Sab'];
-        $chart_labels[] = $days_indo[$day_name];
-        $chart_data[] = $res_chart['total'] ?? 0;
-    }
-}
+<?php 
+// FILE: dashboard.php
+// Memanggil logika backend sebelum merender HTML
+require_once '../../process/process_owner.php'; 
 ?>
 
 <!DOCTYPE html>
@@ -143,42 +62,6 @@ if ($has_store) {
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
         }
         
-        .gradient-border {
-            position: relative;
-            background: linear-gradient(white, white) padding-box,
-                        linear-gradient(135deg, #667eea, #764ba2) border-box;
-            border: 2px solid transparent;
-        }
-        
-        .pulse-glow {
-            animation: pulseGlow 2s ease-in-out infinite;
-        }
-        
-        @keyframes pulseGlow {
-            0%, 100% { box-shadow: 0 0 20px rgba(102, 126, 234, 0.4); }
-            50% { box-shadow: 0 0 30px rgba(102, 126, 234, 0.6); }
-        }
-        
-        .floating {
-            animation: floating 3s ease-in-out infinite;
-        }
-        
-        @keyframes floating {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-        }
-        
-        .shimmer {
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
-            background-size: 200% 100%;
-            animation: shimmer 2s infinite;
-        }
-        
-        @keyframes shimmer {
-            0% { background-position: -200% 0; }
-            100% { background-position: 200% 0; }
-        }
-        
         .card-gradient {
             background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
         }
@@ -204,29 +87,41 @@ if ($has_store) {
             50% { transform: translate(10px, 10px); }
         }
         
-        .progress-ring {
-            transform: rotate(-90deg);
-        }
-        
-        .progress-ring-circle {
-            transition: stroke-dashoffset 0.5s ease;
-        }
-        
-        @keyframes draw {
-            to { stroke-dashoffset: 0; }
-        }
-        
         .chart-container {
             position: relative;
             background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);
             border-radius: 1.5rem;
             padding: 1.5rem;
         }
+
+        /* Modal Animation Styles */
+        .modal-enter {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease-out;
+        }
+        .modal-enter-active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .modal-content-enter {
+            transform: scale(0.95) translateY(10px);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .modal-content-active {
+            transform: scale(1) translateY(0);
+            opacity: 1;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: linear-gradient(135deg, #5568d3, #65408b); }
     </style>
 </head>
 <body class="min-h-screen pb-16">
 
-    <!-- Decorative Background Elements -->
     <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
         <div class="absolute top-0 right-0 w-96 h-96 bg-blue-50 rounded-full filter blur-3xl opacity-20"></div>
         <div class="absolute bottom-0 left-0 w-96 h-96 bg-purple-50 rounded-full filter blur-3xl opacity-20"></div>
@@ -234,32 +129,33 @@ if ($has_store) {
 
     <nav class="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center sticky top-0 z-50 shadow-sm">
         <div class="flex items-center gap-3 animate-fadeIn">
-    <div class="relative">
-        <div class="h-10 w-10 bg-gradient-to-br from-blue-100 to-purple-100 rounded-lg flex items-center justify-center border border-blue-50 shadow-sm relative z-10">
-            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path> </svg>
-        </div>
-        <div class="absolute inset-0 bg-blue-400 blur-md opacity-20 rounded-lg"></div>
-    </div>
+            <div class="relative">
+                <div class="h-10 w-10 bg-gradient-to-br from-blue-100 to-purple-100 rounded-lg flex items-center justify-center border border-blue-50 shadow-sm relative z-10">
+                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path> </svg>
+                </div>
+                <div class="absolute inset-0 bg-blue-400 blur-md opacity-20 rounded-lg"></div>
+            </div>
 
-    <div class="hidden md:block">
-        <span class="block font-bold text-gray-800 text-lg leading-tight tracking-tight">
-            <?= htmlspecialchars($store_name) ?>
-        </span>
-        
-        <span class="block text-xs text-gray-500 font-medium mt-0.5 max-w-[250px] truncate" title="<?= htmlspecialchars($store_address) ?>">
-            <?= htmlspecialchars($store_address) ?>
-        </span>
-    </div>
-</div>
+            <div class="hidden md:block">
+                <span class="block font-bold text-gray-800 text-lg leading-tight tracking-tight">
+                    <?= htmlspecialchars($store_name) ?>
+                </span>
+                
+                <span class="block text-xs text-gray-500 font-medium mt-0.5 max-w-[250px] truncate" title="<?= htmlspecialchars($store_address) ?>">
+                    <?= htmlspecialchars($store_address) ?>
+                </span>
+            </div>
+        </div>
         <div class="flex items-center gap-4">
             <div class="text-right hidden sm:block">
                 <p class="text-sm font-bold text-gray-700"><?= htmlspecialchars($fullname) ?></p>
                 <p class="text-xs font-semibold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">Owner</p>
             </div>
-            <a href="../../auth/logout.php" class="text-red-500 hover:text-white hover:bg-red-500 transition-all duration-300 p-3 bg-red-50 rounded-xl hover-lift" title="Keluar">
+            
+            <button onclick="confirmLogout()" class="text-red-500 hover:text-white hover:bg-red-500 transition-all duration-300 p-3 bg-red-50 rounded-xl hover-lift group relative" title="Keluar">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-            </a>
+            </button>
         </div>
     </nav>
 
@@ -268,7 +164,6 @@ if ($has_store) {
         <?php if ($has_store): ?>
             
             <div class="animate-fadeIn">
-                <!-- Header Section -->
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-4">
                     <div class="animate-slideUp">
                         <div class="flex items-center gap-3 mb-2">
@@ -300,10 +195,7 @@ if ($has_store) {
                     </div>
                 </div>
 
-                <!-- Stats Cards -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-                    
-                    <!-- Omzet Card -->
                     <div class="card-gradient p-8 rounded-3xl shadow-2xl hover-lift border border-white/50 animate-scaleIn relative overflow-hidden group">
                         <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-green-400/20 to-emerald-400/20 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
                         <div class="relative z-10">
@@ -327,7 +219,6 @@ if ($has_store) {
                         </div>
                     </div>
 
-                    <!-- Transaction Card -->
                     <div class="card-gradient p-8 rounded-3xl shadow-2xl hover-lift border border-white/50 animate-scaleIn relative overflow-hidden group" style="animation-delay: 0.1s;">
                         <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-400/20 to-cyan-400/20 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
                         <div class="relative z-10">
@@ -350,7 +241,6 @@ if ($has_store) {
                         </div>
                     </div>
 
-                    <!-- Stock Card -->
                     <div class="card-gradient p-8 rounded-3xl shadow-2xl hover-lift border border-white/50 animate-scaleIn relative overflow-hidden group" style="animation-delay: 0.2s;">
                         <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-orange-400/20 to-red-400/20 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
                         <div class="relative z-10">
@@ -382,12 +272,9 @@ if ($has_store) {
                             <?php endif; ?>
                         </div>
                     </div>
-
                 </div>
 
-                <!-- Chart and Recent Transactions -->
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <!-- Chart Section -->
                     <div class="lg:col-span-2 card-gradient p-8 rounded-3xl shadow-2xl border border-white/50 animate-slideUp">
                         <div class="flex justify-between items-center mb-6">
                             <div>
@@ -410,7 +297,6 @@ if ($has_store) {
                         </div>
                     </div>
 
-                    <!-- Recent Transactions -->
                     <div class="lg:col-span-1 card-gradient p-8 rounded-3xl shadow-2xl border border-white/50 animate-slideUp" style="animation-delay: 0.1s;">
                         <div class="flex justify-between items-center mb-6">
                             <div>
@@ -542,22 +428,6 @@ if ($has_store) {
                 });
             </script>
 
-            <style>
-                .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-                .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 10px; }
-                .custom-scrollbar::-webkit-scrollbar-thumb { background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 10px; }
-                .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: linear-gradient(135deg, #5568d3, #65408b); }
-                
-                @keyframes blob {
-                    0%, 100% { transform: translate(0, 0) scale(1); }
-                    33% { transform: translate(30px, -50px) scale(1.1); }
-                    66% { transform: translate(-20px, 20px) scale(0.9); }
-                }
-                .animate-blob { animation: blob 7s infinite; }
-                .animation-delay-2000 { animation-delay: 2s; }
-                .animation-delay-4000 { animation-delay: 4s; }
-            </style>
-
         <?php else: ?>
 
             <div class="flex flex-col items-center justify-center min-h-[70vh] text-center animate-fadeIn">
@@ -622,6 +492,83 @@ if ($has_store) {
         <?php endif; ?>
 
     </div>
+
+    <div id="logoutModal" class="fixed inset-0 z-[100] hidden">
+        <div class="absolute inset-0 bg-gray-900/60 backdrop-blur-sm transition-opacity opacity-0" id="logoutBackdrop"></div>
+        
+        <div class="flex items-center justify-center min-h-screen px-4 py-8">
+            <div class="relative w-full max-w-md p-0 bg-white rounded-3xl shadow-2xl transform scale-95 opacity-0 transition-all duration-300 overflow-hidden" id="logoutPanel">
+                
+                <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-red-500 to-orange-500"></div>
+                <div class="absolute -right-10 -top-10 w-32 h-32 bg-red-50 rounded-full blur-2xl opacity-50"></div>
+                
+                <div class="p-8 text-center relative z-10">
+                    <div class="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm border border-red-100">
+                        <svg class="w-10 h-10 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                        </svg>
+                    </div>
+
+                    <h3 class="text-2xl font-bold text-gray-900 mb-2 font-display">Konfirmasi Keluar</h3>
+                    <p class="text-gray-500 text-sm mb-8 leading-relaxed">
+                        Anda yakin ingin mengakhiri sesi ini? <br>
+                        Anda harus login kembali untuk mengakses dashboard.
+                    </p>
+                    
+                    <div class="flex gap-4">
+                        <button onclick="closeLogoutModal()" class="w-full py-3.5 px-6 rounded-xl border border-gray-200 text-gray-700 font-bold hover:bg-gray-50 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-200">
+                            Batal
+                        </button>
+                        <a href="../../auth/logout.php" class="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-red-600 to-orange-600 text-white font-bold hover:shadow-lg hover:scale-[1.02] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 shadow-md flex items-center justify-center gap-2">
+                            <span>Ya, Keluar</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const modal = document.getElementById('logoutModal');
+        const backdrop = document.getElementById('logoutBackdrop');
+        const panel = document.getElementById('logoutPanel');
+
+        function confirmLogout() {
+            modal.classList.remove('hidden');
+            // Small delay to allow display:block to apply before changing opacity
+            setTimeout(() => {
+                modal.classList.add('modal-enter-active');
+                backdrop.classList.remove('opacity-0');
+                panel.classList.remove('scale-95', 'opacity-0');
+                panel.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeLogoutModal() {
+            backdrop.classList.add('opacity-0');
+            panel.classList.remove('scale-100', 'opacity-100');
+            panel.classList.add('scale-95', 'opacity-0');
+            
+            setTimeout(() => {
+                modal.classList.remove('modal-enter-active');
+                modal.classList.add('hidden');
+            }, 300); // Match transition duration
+        }
+
+        // Close on backdrop click
+        modal.addEventListener('click', function(e) {
+            if (e.target === backdrop || e.target.closest('#logoutPanel') === null && e.target !== panel) {
+                // closeLogoutModal(); // Optional: Uncomment if you want backdrop click to close
+            }
+        });
+        
+        // Close on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+                closeLogoutModal();
+            }
+        });
+    </script>
 
 </body>
 </html>

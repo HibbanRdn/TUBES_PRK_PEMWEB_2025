@@ -1,58 +1,9 @@
-<?php
-session_start();
-require_once '../../config/database.php';
-
-// 1. Cek Login & Role Owner
-if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true || $_SESSION['role'] !== 'owner') {
-    header("Location: ../../auth/login.php");
-    exit;
-}
-
-$owner_id = $_SESSION['user_id'];
-$fullname = $_SESSION['fullname'];
-
-// 2. Cek Apakah Sudah Punya Toko
-$sql_check = "SELECT id FROM stores WHERE owner_id = ? LIMIT 1";
-$stmt = mysqli_prepare($conn, $sql_check);
-mysqli_stmt_bind_param($stmt, "i", $owner_id);
-mysqli_stmt_execute($stmt);
-if (mysqli_num_rows(mysqli_stmt_get_result($stmt)) > 0) {
-    header("Location: dashboard.php");
-    exit;
-}
-
-$message = "";
-
-// 3. Proses Form Submit
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $store_name = trim($_POST['name']);
-    $phone      = trim($_POST['phone']);
-    $address    = trim($_POST['address']);
-    $category   = trim($_POST['category']); 
-
-    // Validasi
-    if (empty($store_name) || empty($phone) || empty($address) || empty($category)) {
-        $message = "<div class='flex items-center p-4 mb-6 text-sm text-red-800 border border-red-300 rounded-xl bg-red-50 animate-fadeInUp shadow-sm' role='alert'>
-                        <svg class='flex-shrink-0 inline w-5 h-5 me-3' fill='currentColor' viewBox='0 0 20 20'><path d='M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z'/></svg>
-                        <span class='font-semibold'>Mohon lengkapi semua data usaha Anda.</span>
-                    </div>";
-    } else {
-        // Insert ke Database
-        $sql_insert = "INSERT INTO stores (owner_id, name, phone, address, category) VALUES (?, ?, ?, ?, ?)";
-        
-        if ($stmt = mysqli_prepare($conn, $sql_insert)) {
-            mysqli_stmt_bind_param($stmt, "issss", $owner_id, $store_name, $phone, $address, $category);
-            
-            if (mysqli_stmt_execute($stmt)) {
-                header("Location: dashboard.php?setup=success");
-                exit;
-            } else {
-                $message = "<div class='flex items-center p-4 mb-6 text-sm text-red-800 border border-red-300 rounded-xl bg-red-50 animate-fadeInUp shadow-sm'>Terjadi kesalahan sistem: " . mysqli_error($conn) . "</div>";
-            }
-        }
-    }
-}
+<?php 
+// FILE: store_setup.php
+// Memanggil Backend Logic
+require_once '../../process/process_store_setup.php'; 
 ?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -296,7 +247,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
 
     <script>
-        // Animasi input focus seperti pada login
+        // Animasi input focus
         const inputs = document.querySelectorAll('input[type="text"], select, textarea');
         inputs.forEach(input => {
             input.addEventListener('focus', function() { this.parentElement.classList.add('scale-[1.01]'); });
@@ -307,7 +258,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         const setupForm = document.getElementById('setupForm');
         setupForm.addEventListener('submit', function(e) {
             const submitBtn = this.querySelector('button[type="submit"]');
-            const originalContent = submitBtn.innerHTML;
             
             submitBtn.innerHTML = '<svg class="animate-spin h-5 w-5 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>';
             submitBtn.disabled = true;
