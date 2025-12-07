@@ -76,16 +76,16 @@ Aplikasi ini dibangun menggunakan teknologi Native sesuai ketentuan tugas besar:
 
 Untuk memenuhi syarat User Management, kita bagi hak aksesnya:  
 **1. Owner:**
-    - Bisa akses semua halaman.
-    - Fitur eksklusif: Melihat Laporan Penjualan (Grafik/Tabel total pendapatan) dan Manajemen User (Tambah/Hapus karyawan).
+- Bisa akses semua halaman.  
+- Fitur eksklusif: Melihat Laporan Penjualan (Grafik/Tabel total pendapatan) dan Manajemen User (Tambah/Hapus karyawan).
 
-**2. Admin Gudang:**
-    - Fokus pada halaman products.php.
-    - Tugas: Tambah barang baru, edit harga, dan restock barang.
+**2. Admin Gudang:** 
+- Fokus pada halaman products.php.  
+- Tugas: Tambah barang baru, edit harga, dan restock barang.
 
-**3. Kasir:**
-    - Fokus pada halaman pos.php.
-    - Tugas: Input transaksi penjualan. Stok barang di database berkurang otomatis saat kasir menekan "Bayar".
+**3. Kasir:** 
+- Fokus pada halaman pos.php.  
+- Tugas: Input transaksi penjualan. Stok barang di database berkurang otomatis saat kasir menekan "Bayar".
 
 --- 
 
@@ -104,7 +104,10 @@ Untuk memenuhi syarat User Management, kita bagi hak aksesnya:
     * Buka browser dan akses: http://localhost/.../kelompok_28/.
 
 > ⚠️ Catatan Pengembangan
+>
 > Pastikan koneksi internet aktif saat pengembangan karena Tailwind CSS dan Chart.js dimuat melalui CDN. Folder library/ berisi dependensi PHP yang tidak boleh dihapus.
+
+---
 
 ### Perubahan yang dilakukan:
 1.  **Update Tech Stack:** Menghapus "To be decided" pada CSS dan menegaskan penggunaan **Tailwind CSS**.
