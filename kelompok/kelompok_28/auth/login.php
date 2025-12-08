@@ -46,7 +46,7 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
                 transform: translateY(0px); 
             }
             50% { 
-                transform: translateY(-12px); /* Logo naik 15px */
+                transform: translateY(-14px); 
             }
         }
         
@@ -60,7 +60,7 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
             to { opacity: 1; transform: translateX(0); }
         }
         
-        .animate-float { animation: float 5s ease-in-out infinite; }
+        .animate-float { animation: float 4s ease-in-out infinite; }
         .animate-fadeInUp { animation: fadeInUp 0.8s ease-out forwards; }
         .animate-slideInLeft { animation: slideInLeft 0.8s ease-out forwards; }
         
@@ -298,9 +298,11 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
 
             <div class="text-center p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
                 <p class="text-sm text-gray-600 mb-3">Belum punya akun staf?</p>
-                <a href="mailto:hibbanrdn@gmail.com?subject=Permintaan%20Akun%20Staff%20Baru%20-%20DigiNiaga" class="inline-flex items-center space-x-2 font-semibold text-brand-600 hover:text-brand-700 transition-colors group">
-                    <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                    <span>Hubungi Owner</span>
+                <a href="contact_store.php" class="inline-flex items-center space-x-2 font-semibold text-brand-600 hover:text-brand-700 transition-colors group">
+                    <svg class="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    <span>Cari Toko & Hubungi Owner</span>
                 </a>
             </div>
 
