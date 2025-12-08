@@ -1,10 +1,15 @@
 <?php
 session_start();
-require_once '../../config/database.php';
+
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+require_once '../config/database.php'; 
 
 // 1. CEK LOGIN & ROLE
 if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true || !isset($_SESSION['store_id'])) {
-    header("Location: ../../auth/login.php");
+    // Redirect jika belum login (path disesuaikan ke folder auth)
+    header("Location: ../auth/login.php");
     exit;
 }
 
@@ -12,7 +17,6 @@ $store_id = $_SESSION['store_id'];
 $action = $_GET['act'] ?? '';
 
 // --- FUNGSI VALIDASI ---
-// Kita pisahkan validasi agar bisa dipakai di ADD maupun UPDATE
 function validateInput($name, $price, $stock) {
     if (empty($name)) {
         return "Nama barang tidak boleh kosong.";
@@ -23,7 +27,7 @@ function validateInput($name, $price, $stock) {
     if ($stock < 0) {
         return "Stok tidak boleh negatif (kurang dari 0).";
     }
-    return true; // Lolos validasi
+    return true; 
 }
 
 // --- LOGIKA TAMBAH BARANG (CREATE) ---
@@ -35,10 +39,9 @@ if ($action == 'add' && $_SERVER['REQUEST_METHOD'] == 'POST') {
     $stock       = (int) $_POST['stock'];
     $description = "-"; 
 
-    // 1. VALIDASI SERVER SIDE
+    // Validasi Server Side
     $validation = validateInput($name, $price, $stock);
     if ($validation !== true) {
-        // Redirect kembali dengan pesan error
         header("Location: ../pages/admin_gudang/inventory.php?status=error&msg=" . urlencode($validation));
         exit;
     }
@@ -53,7 +56,7 @@ if ($action == 'add' && $_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-// --- LOGIKA UPDATE BARANG (EDIT) [BARU] ---
+// --- LOGIKA UPDATE BARANG (EDIT) ---
 elseif ($action == 'update' && $_SERVER['REQUEST_METHOD'] == 'POST') {
     
     $id          = (int) $_POST['id'];
@@ -62,15 +65,14 @@ elseif ($action == 'update' && $_SERVER['REQUEST_METHOD'] == 'POST') {
     $price       = (float) $_POST['price'];
     $stock       = (int) $_POST['stock'];
 
-    // 1. VALIDASI SERVER SIDE
+    // Validasi Server Side
     $validation = validateInput($name, $price, $stock);
     if ($validation !== true) {
         header("Location: ../pages/admin_gudang/inventory.php?status=error&msg=" . urlencode($validation));
         exit;
     }
 
-    // 2. QUERY UPDATE
-    // Penting: Selalu gunakan "AND store_id = '$store_id'" untuk keamanan (mencegah edit punya toko lain)
+    // Query Update dengan keamanan store_id
     $query = "UPDATE products 
               SET name = '$name', 
                   category_id = '$category_id', 

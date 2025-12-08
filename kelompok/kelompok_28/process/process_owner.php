@@ -1,6 +1,9 @@
 <?php
 // FILE: process_owner.php
 
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 session_start();
 // Pastikan path database sesuai dengan struktur folder Anda
 require_once '../../config/database.php';
