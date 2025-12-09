@@ -23,7 +23,7 @@ switch ($role) {
         break;
 
     case 'kasir':
-        header("Location: pages/kasir/dashboard.php");
+        header("Location: pages/kasir/kasir.php");
         break;
 
     default:

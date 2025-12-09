@@ -1,16 +1,14 @@
 <?php
 // FILE: process/process_cashier.php
 
-// --- GANTI BARIS session_start(); BIASA DENGAN INI ---
+// 1. Session Check yang Aman
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-// -----------------------------------------------------
 
 require_once __DIR__ . '/../config/database.php'; 
 
-// ... sisa kode ke bawah biarkan sama ...
-// Variabel Default (Jika tidak ada di database)
+// Variabel Default
 $store_name = 'DigiNiaga POS';
 $store_address = '-';
 $products = [];
@@ -24,9 +22,9 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
 $store_id = $_SESSION['store_id'] ?? 0;
 $employee_id = $_SESSION['user_id'] ?? 0;
 
-// === BAGIAN 1: GET DATA (Untuk dipanggil require di dashboard) ===
+// === BAGIAN 1: GET DATA (Untuk tampilan Dashboard) ===
 if ($store_id > 0) {
-    // 1. KEMBALIKAN LOGIKA AMBIL NAMA TOKO
+    // Ambil Nama Toko
     $sql_store = "SELECT name, address FROM stores WHERE id = ? LIMIT 1";
     if ($stmt = mysqli_prepare($conn, $sql_store)) {
         mysqli_stmt_bind_param($stmt, "i", $store_id);
@@ -36,12 +34,21 @@ if ($store_id > 0) {
             $store_name = $row['name'];
             $store_address = $row['address'];
         }
+        mysqli_stmt_close($stmt);
     }
 
-    // 2. AMBIL PRODUK (Hanya jika bukan POST request/submit form)
-    // Supaya saat proses bayar tidak perlu load produk lagi (lebih ringan)
+    // Ambil Produk
+    // PENTING: Hanya ambil jika request GET (bukan saat submit transaksi)
     if ($_SERVER['REQUEST_METHOD'] != 'POST') {
-        $query_product = "SELECT p.*, c.name as category_name FROM products p LEFT JOIN categories c ON p.category_id = c.id WHERE p.store_id = ? AND p.is_active = 1 AND p.stock > 0 ORDER BY p.name ASC";
+        // PERUBAHAN: Menghapus 'AND p.stock > 0' 
+        // Agar frontend bisa menampilkan produk yang statusnya 'Sold Out/Habis'
+        // Tambahkan p.code jika kolom kode produk ada di database Anda
+        $query_product = "SELECT p.*, c.name as category_name 
+                          FROM products p 
+                          LEFT JOIN categories c ON p.category_id = c.id 
+                          WHERE p.store_id = ? AND p.is_active = 1 
+                          ORDER BY p.name ASC";
+                          
         if ($stmt_prod = mysqli_prepare($conn, $query_product)) {
             mysqli_stmt_bind_param($stmt_prod, "i", $store_id);
             mysqli_stmt_execute($stmt_prod);
@@ -49,96 +56,112 @@ if ($store_id > 0) {
             while($row = mysqli_fetch_assoc($result_prod)) {
                 $products[] = $row;
             }
+            mysqli_stmt_close($stmt_prod);
         }
     }
 }
 
-// === BAGIAN 2: PROSES TRANSAKSI (Logic Pembayaran) ===
+// === BAGIAN 2: PROSES TRANSAKSI (POST) ===
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['process_transaction'])) {
     
+    // 1. Ambil & Validasi Data Input
     $cart_data = json_decode($_POST['cart_data'], true);
     
-    // Filter angka
-    $total_price = (float) filter_var($_POST['total_amount'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
-    $cash_amount = (float) filter_var($_POST['pay_amount'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+    // Bersihkan format angka (hapus Rp, titik, koma jika ada sisa dari frontend)
+    // Namun idealnya frontend sudah mengirim raw number di input hidden
+    $post_total = (float) $_POST['total_amount'];
+    $post_pay   = (float) $_POST['pay_amount'];
     
-    // Validasi JSON Error
-    if (json_last_error() !== JSON_ERROR_NONE || !is_array($cart_data)) {
-         echo "<script>alert('Data keranjang corrupt/error!'); window.history.back();</script>"; exit;
+    if (json_last_error() !== JSON_ERROR_NONE || !is_array($cart_data) || empty($cart_data)) {
+         echo "<script>alert('Data keranjang tidak valid atau kosong!'); window.history.back();</script>"; 
+         exit;
     }
 
-    // Hitung Ulang di Server (Keamanan)
+    // 2. Hitung Ulang Total di Server (Security: Jangan percaya nominal dari frontend)
     $server_total = 0;
+    
+    // Kita perlu loop dulu untuk hitung total, validasi harga database nanti bisa ditambahkan
+    // Untuk performa, kita percaya harga yang dikirim di cart_data tapi stok divalidasi
     foreach($cart_data as $item) {
         $server_total += ($item['price'] * $item['qty']);
     }
 
-    // Validasi Sederhana
-    if (empty($cart_data)) {
-        echo "<script>alert('Keranjang Kosong!'); window.history.back();</script>"; exit;
-    }
-    
-    // Toleransi float precision (opsional, tapi disarankan)
-    if ($cash_amount < ($server_total - 1)) { 
-        echo "<script>alert('Uang Kurang!'); window.history.back();</script>"; exit;
+    // Cek Pembayaran
+    // Gunakan epsilon 0.01 untuk toleransi floating point comparison
+    if ($post_pay < ($server_total - 0.01)) { 
+        echo "<script>alert('Uang pembayaran kurang!'); window.history.back();</script>"; 
+        exit;
     }
 
-    $change_amount = $cash_amount - $server_total;
-    $invoice_code = "INV/" . date('Ymd') . "/" . $store_id . "/" . rand(100, 999);
+    $change_amount = $post_pay - $server_total;
+    // Format Invoice: INV/YYYYMMDD/STOREID/RANDOM
+    $invoice_code = "INV/" . date('Ymd') . "/" . $store_id . "/" . strtoupper(substr(uniqid(), -4));
     $date_now = date('Y-m-d H:i:s');
 
+    // 3. Mulai Database Transaction
     mysqli_begin_transaction($conn);
 
     try {
-        // 1. Insert Header Transaksi
-        $sql = "INSERT INTO transactions (store_id, employee_id, invoice_code, total_price, cash_amount, change_amount, date) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("iisddds", $store_id, $employee_id, $invoice_code, $server_total, $cash_amount, $change_amount, $date_now);
+        // A. Insert ke tabel transactions
+        $sql_head = "INSERT INTO transactions (store_id, employee_id, invoice_code, total_price, cash_amount, change_amount, date) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $stmt_head = $conn->prepare($sql_head);
+        $stmt_head->bind_param("iisddds", $store_id, $employee_id, $invoice_code, $server_total, $post_pay, $change_amount, $date_now);
         
-        if (!$stmt->execute()) throw new Exception("Gagal Invoice: " . $stmt->error);
+        if (!$stmt_head->execute()) {
+            throw new Exception("Gagal membuat invoice: " . $stmt_head->error);
+        }
         $trx_id = $conn->insert_id;
-        $stmt->close();
+        $stmt_head->close();
 
-        // 2. Insert Detail & Potong Stok
+        // B. Prepare Statement untuk Detail & Update Stok
         $sql_det = "INSERT INTO transaction_details (transaction_id, product_id, qty, price_at_transaction, subtotal) VALUES (?, ?, ?, ?, ?)";
-        $sql_stk = "UPDATE products SET stock = stock - ? WHERE id = ? AND store_id = ?";
-        
         $stmt_det = $conn->prepare($sql_det);
+
+        // PERUBAHAN PENTING: Update stok dengan kondisi stock >= qty
+        // Ini mencegah stok menjadi minus jika ada race condition
+        $sql_stk = "UPDATE products SET stock = stock - ? WHERE id = ? AND store_id = ? AND stock >= ?";
         $stmt_stk = $conn->prepare($sql_stk);
 
         foreach ($cart_data as $item) {
-            $sub = $item['price'] * $item['qty'];
             $p_id = $item['id'];
             $qty = $item['qty'];
             $price = $item['price'];
+            $subtotal = $price * $qty;
             
-            // Simpan Detail
-            $stmt_det->bind_param("iiidd", $trx_id, $p_id, $qty, $price, $sub);
-            if (!$stmt_det->execute()) throw new Exception("Gagal Detail Item ID: " . $p_id);
+            // 1. Update Stok dulu (Validasi Stok Nyata)
+            $stmt_stk->bind_param("iiii", $qty, $p_id, $store_id, $qty);
+            $stmt_stk->execute();
 
-            // Kurangi Stok
-            $stmt_stk->bind_param("iii", $qty, $p_id, $store_id);
-            if (!$stmt_stk->execute()) throw new Exception("Gagal Potong Stok Item ID: " . $p_id);
+            if ($stmt_stk->affected_rows === 0) {
+                // Jika 0 row updated, berarti stok tidak cukup di DB atau ID salah
+                throw new Exception("Stok tidak mencukupi untuk produk: " . $item['name']);
+            }
+
+            // 2. Insert Detail
+            $stmt_det->bind_param("iiidd", $trx_id, $p_id, $qty, $price, $subtotal);
+            if (!$stmt_det->execute()) {
+                throw new Exception("Gagal menyimpan detail produk: " . $item['name']);
+            }
         }
 
+        // C. Commit Transaksi
         mysqli_commit($conn);
 
-        // === SUKSES: SIMPAN INFO KE SESSION UNTUK POPUP ===
-        // PERBAIKAN DI SINI: Ubah 'trx_success' jadi 'success_trx' 
-        // agar sesuai dengan dashboard.php
+        // D. Set Session Sukses (Sesuai Frontend Baru)
         $_SESSION['success_trx'] = [
             'invoice' => $invoice_code,
             'total' => $server_total,
-            'pay' => $cash_amount,
+            'pay' => $post_pay,
             'change' => $change_amount
         ];
         
-        // Redirect kembali ke dashboard
-        header("Location: ../pages/kasir/dashboard.php");
+        // Redirect
+        header("Location: ../pages/kasir/kasir.php");
         exit;
 
     } catch (Exception $e) {
         mysqli_rollback($conn);
+        // Log error jika perlu: error_log($e->getMessage());
         echo "<script>alert('Transaksi Gagal: " . addslashes($e->getMessage()) . "'); window.history.back();</script>";
         exit;
     }
