@@ -14,6 +14,7 @@
                     <p class="text-gray-500 text-sm mb-8 leading-relaxed">Anda yakin ingin mengakhiri sesi ini? <br>Anda harus login kembali untuk mengakses dashboard.</p>
                     <div class="flex gap-4">
                         <button onclick="closeLogoutModal()" class="w-full py-3.5 px-6 rounded-xl border border-gray-200 text-gray-700 font-bold hover:bg-gray-50 transition-colors duration-200">Batal</button>
+                        
                         <a href="../../auth/logout.php" class="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-red-600 to-orange-600 text-white font-bold hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-2"><span>Ya, Keluar</span></a>
                     </div>
                 </div>

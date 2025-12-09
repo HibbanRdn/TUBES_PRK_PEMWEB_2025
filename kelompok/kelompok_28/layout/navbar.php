@@ -20,8 +20,11 @@
     </div>
     <div class="flex items-center gap-4">
         <div class="text-right hidden sm:block">
-            <p class="text-sm font-bold text-gray-700"><?= isset($fullname) ? htmlspecialchars($fullname) : 'Owner' ?></p>
-            <p class="text-xs font-semibold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">Owner</p>
+            <p class="text-sm font-bold text-gray-700"><?= isset($_SESSION['fullname']) ? htmlspecialchars($_SESSION['fullname']) : 'User' ?></p>
+            
+            <p class="text-xs font-semibold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent uppercase tracking-wider">
+                <?= isset($_SESSION['role']) ? htmlspecialchars(str_replace('_', ' ', $_SESSION['role'])) : 'STAFF' ?>
+            </p>
         </div>
         
         <button onclick="confirmLogout()" class="text-red-500 hover:text-white hover:bg-red-500 transition-all duration-300 p-3 bg-red-50 rounded-xl hover-lift group relative" title="Keluar">
