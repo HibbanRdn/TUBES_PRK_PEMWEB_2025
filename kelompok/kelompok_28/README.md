@@ -1,4 +1,4 @@
-# 💻 Web-Based Point of Sales (POS) & Inventory Management
+# 💻 DigiNiaga: Web-Based POS & Inventory Management
 
 > **Tugas Besar Praktikum Pemrograman Web 2025**
 >
@@ -71,6 +71,7 @@ Aplikasi ini dibangun menggunakan teknologi **Native** sesuai ketentuan tugas be
 ```bash
 /kelompok_28
 ├── /assets                # Aset statis (Logo, Gambar)
+├── /docs                  # Screenshot Tampilan
 ├── /auth                  # Logika Autentikasi (Login, Register, Forgot Pass)
 ├── /config                # Konfigurasi Database & Email
 │   ├── database.php
@@ -181,9 +182,9 @@ Output Laporan Penjualan dan Struk yang bisa diunduh.
 | ![Cashier](docs/cetakLaporan.png) | ![Logout](docs/struk.png) |
 
 ---
-> **Catatan Pengembangan:**  
+> **Catatan:**  
 > Pastikan koneksi internet aktif saat menjalankan aplikasi karena **Tailwind CSS** dan **Chart.js** dimuat melalui CDN.
 
 ---
 
-**Laboratorium Teknik Komputer — Universitas Lampung**
+***Dibuat untuk memenuhi Tugas Besar Praktikum Pemrograman Web - Laboratorium Teknik Komputer Unila.***
