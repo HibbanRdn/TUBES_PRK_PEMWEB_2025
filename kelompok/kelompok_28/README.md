@@ -11,46 +11,58 @@ Aplikasi ini adalah sistem kasir (Point of Sales) dan manajemen stok barang berb
 
 ## 👥 Anggota Kelompok 28
 
-| No  | Nama Lengkap | NPM | Role |
+| No  | Nama Lengkap | NPM | Username GitHub |
 | :--- | :--- | :--- | :--- |
-| 1 | **M. Hibban Ramadhan** | **2315061094** | Fullstack / Project Lead |
-| 2 | **Syahrul Ghufron Al Hamdan** | **2315061063** | Frontend |
-| 3 | **M. Reza Rohman** | **2315061004** | Frontend |
-| 4 | **Makka Muhammad Mustova** | **2315061100** | UI/Doc |
+| 1 | **M. Hibban Ramadhan** | **2315061094** | [HibbanRdn](https://github.com/HibbanRdn) |
+| 2 | **Syahrul Ghufron Al Hamdan** | **2315061063** | [Arlopen](https://github.com/Arlopen) |
+| 3 | **M. Reza Rohman** | **2315061004** | [Rezarohman19](https://github.com/Rezarohman19) |
+| 4 | **Makka Muhammad Mustova** | **2315061100** | [t0pol](https://github.com/t0pol) |
 
 ---
 
 ## 📖 Fitur & Fungsionalitas
 
-### 1. Multi-Role Authentication
-Sistem membedakan akses antara pemilik dan karyawan demi keamanan data.
-* **Owner:** Akses penuh ke dashboard analitik, manajemen karyawan, pengaturan toko, dan laporan.
-* **Admin Gudang:** (Coming Soon) Input stok masuk, manajemen kategori & data produk.
-* **Kasir:** (Coming Soon) Input transaksi penjualan (POS) dengan kalkulasi otomatis.
+Aplikasi ini memiliki sistem **Multi-Role Authentication** yang membagi hak akses menjadi tiga:
 
-### 2. Dashboard & Reporting (Owner)
-* **Statistik Real-time:** Omzet harian, total transaksi, dan peringatan stok menipis.
-* **Visualisasi Data:** Grafik tren penjualan dan kategori terlaris menggunakan **Chart.js**.
-* **Cetak Laporan:** Ekspor laporan transaksi berdasarkan periode (7 hari/30 hari/Bulan ini) ke format **PDF** dengan kop surat otomatis (menggunakan **FPDF**).
+### 1. 👑 Owner (Pemilik Toko)
+Akses penuh terhadap manajemen bisnis.
+* **Dashboard Analitik:** Grafik tren penjualan mingguan (Chart.js), total omzet harian, dan notifikasi stok menipis.
+* **Manajemen Toko:** Setup profil toko (Nama, Alamat, Kategori) saat pertama kali mendaftar.
+* **Manajemen Karyawan:** Menambah, mengedit, dan menghapus akun staf (Kasir & Admin Gudang).
+* **Laporan Penjualan:** Filter laporan berdasarkan periode (7 hari/30 hari/Bulan ini) dan **Cetak PDF** dengan kop surat otomatis.
+* **Pengaturan:** Update profil owner dan informasi toko.
 
-### 3. Keamanan & Utilitas
+### 2. 📦 Admin Gudang
+Fokus pada manajemen inventaris toko.
+* **Manajemen Produk:** Tambah barang baru, edit harga, dan update stok.
+* **Manajemen Kategori:** Mengelompokkan barang berdasarkan kategori.
+* **Monitoring Stok:** Indikator visual untuk barang yang stoknya menipis (< 5 unit).
+
+### 3. 🛒 Kasir (Point of Sales)
+Antarmuka penjualan yang cepat dan responsif.
+* **Transaksi:** Keranjang belanja interaktif, kalkulasi total & kembalian otomatis.
+* **Pencarian Cepat:** Mencari barang berdasarkan nama atau kode.
+* **Cetak Struk:** Menghasilkan struk belanja dalam format PDF siap cetak setelah transaksi berhasil.
+* **Riwayat Transaksi:** Melihat histori penjualan harian.
+
+### 🔐 Fitur Keamanan & Umum
 * **Enkripsi Password:** Menggunakan `password_hash()` (Bcrypt).
-* **Reset Password:** Fitur lupa password aman menggunakan token dan notifikasi Email (**PHPMailer**).
-* **Setup Wizard:** Konfigurasi awal toko (Nama, Alamat, Telepon) saat pertama kali mendaftar.
+* **Reset Password:** Fitur lupa password menggunakan token hash dan notifikasi Email via SMTP (**PHPMailer**).
+* **Cari Toko:** Fitur publik bagi calon karyawan untuk mencari kontak Owner toko.
 
 ---
 
 ## 🛠️ Teknologi yang Digunakan
 
-Aplikasi ini dibangun menggunakan teknologi Native sesuai ketentuan tugas besar:
+Aplikasi ini dibangun menggunakan teknologi **Native** sesuai ketentuan tugas besar:
 
 * **Backend:** PHP Native (Procedural/Structured).
 * **Frontend:** HTML5, **Tailwind CSS** (via CDN), JavaScript Native (AJAX & DOM).
-* **Database:** MySQL.
+* **Database:** MySQL / MariaDB.
 * **Libraries (Third-Party):**
-    * `FPDF` (PDF Generation).
-    * `PHPMailer` (SMTP Email Service).
-    * `Chart.js` (Data Visualization).
+    * `FPDF` (PDF Generation untuk Laporan & Struk).
+    * `PHPMailer` (Pengiriman Email Reset Password).
+    * `Chart.js` (Visualisasi Grafik Dashboard).
 
 ---
 
@@ -58,64 +70,65 @@ Aplikasi ini dibangun menggunakan teknologi Native sesuai ketentuan tugas besar:
 
 ```bash
 /kelompok_28
-├── /assets                # File statis (Gambar/Logo)
+├── /assets                # Aset statis (Logo, Gambar)
 ├── /auth                  # Logika Autentikasi (Login, Register, Forgot Pass)
 ├── /config                # Konfigurasi Database & Email
 │   ├── database.php
 │   ├── send_email.php
-│   └── smtp_secrets.php   # (Perlu dibuat manual dari example)
-├── /library               # External Libraries (FPDF, PHPMailer)
+│   └── smtp_secrets.php   # (File ini wajib dibuat manual)
+├── /library               # External Libraries (FPDF, Font, PHPMailer)
 ├── /pages                 # Halaman Antarmuka (Views)
-│   └── /owner             # Dashboard & Fitur Owner
+│   ├── /admin_gudang      # Panel Inventory
+│   ├── /kasir             # Panel POS & Cetak Struk
+│   └── /owner             # Dashboard, Laporan, Users
 ├── /process               # Logika Pemrosesan Data (Backend Action)
-└── index.php              # Landing Page / Redirector
+├── db_pos_sme.sql         # File Database SQL
+└── index.php              # Landing Page
 ```
+
 ---
-
-## 🔀 Alur Fitur & Hak Akses (Role)
-
-Untuk memenuhi syarat User Management, kita bagi hak aksesnya:  
-**1. Owner:**
-- Bisa akses semua halaman.  
-- Fitur eksklusif: Melihat Laporan Penjualan (Grafik/Tabel total pendapatan) dan Manajemen User (Tambah/Hapus karyawan).
-
-**2. Admin Gudang:** 
-- Fokus pada halaman products.php.  
-- Tugas: Tambah barang baru, edit harga, dan restock barang.
-
-**3. Kasir:** 
-- Fokus pada halaman pos.php.  
-- Tugas: Input transaksi penjualan. Stok barang di database berkurang otomatis saat kasir menekan "Bayar".
-
---- 
 
 ## 🚀 Cara Instalasi & Menjalankan
-1. Clone/Download repository ini.  
-2. Masuk ke folder project: cd kelompok/kelompok_28.  
-3. Database:  
-    * Buat database baru di MySQL dengan nama db_pos_sme.  
-    * Import file SQL (jika tersedia) atau sesuaikan tabel dengan skema yang dibutuhkan.
-    * Sesuaikan konfigurasi di config/database.php.
-4. Konfigurasi Email (Wajib untuk Fitur Reset Password):
-    * Rename file config/smtp_secrets.example.php menjadi config/smtp_secrets.php.
-    * Isi kredensial SMTP (Host, User, Password/App Password) di dalamnya.
-5. Jalankan Server:  
-    * Simpan folder di htdocs (XAMPP) atau www (Laragon).  
-    * Buka browser dan akses: http://localhost/.../kelompok_28/.
 
-> ⚠️ Catatan Pengembangan
->
-> Pastikan koneksi internet aktif saat pengembangan karena Tailwind CSS dan Chart.js dimuat melalui CDN. Folder library/ berisi dependensi PHP yang tidak boleh dihapus.
+### 1\. Persiapan File & Database
+
+1.  Clone atau Download repository ini.
+2.  Masuk ke folder project: `cd kelompok/kelompok_28`.
+3.  Buat database baru di MySQL (phpMyAdmin) dengan nama **`db_pos_sme`**.
+4.  Import file **`db_pos_sme.sql`** ke dalam database tersebut.
+5.  Pastikan konfigurasi database di `config/database.php` sesuai dengan server lokal Anda (User/Pass).
+
+### 2\. Konfigurasi SMTP (Wajib untuk Reset Password)
+
+Fitur "Lupa Password" memerlukan konfigurasi email pengirim.
+
+1.  Buka folder `config/`.
+2.  Rename file `smtp_secrets.example.php` menjadi **`smtp_secrets.php`**.
+3.  Edit file tersebut dan isi dengan kredensial SMTP Anda (Contoh menggunakan Gmail App Password):
+    ```bash
+    define('SMTP_HOST', 'smtp.gmail.com');
+    define('SMTP_USER', 'email_anda@gmail.com');
+    define('SMTP_PASS', 'app_password_anda'); // Bukan password login gmail biasa
+    define('SMTP_PORT', 465);
+    ```
+
+### 3\. Jalankan Aplikasi
+
+1.  Simpan folder proyek di `htdocs` (XAMPP) atau `www` (Laragon).
+2.  Buka browser dan akses:
+    `http://localhost/TUBES_PRK_PEMWEB_2025/kelompok/kelompok_28/`
+
+### 4\. Alur Penggunaan (User Flow)
+
+1.  **Daftar Owner:** Lakukan **Register** sebagai Owner baru.
+2.  **Setup Toko:** Isi nama toko, alamat, dan kategori bisnis.
+3.  **Tambah Karyawan:** Masuk ke menu *Karyawan*, tambahkan akun untuk **Admin Gudang** dan **Kasir**.
+4.  **Login Karyawan:** Logout dari Owner, lalu login menggunakan akun karyawan yang baru dibuat untuk mengakses fitur POS atau Gudang.
+
+---
+> **Catatan Pengembangan:**  
+> Pastikan koneksi internet aktif saat menjalankan aplikasi karena **Tailwind CSS** dan **Chart.js** dimuat melalui CDN.
 
 ---
 
-### Perubahan yang dilakukan:
-1.  **Update Tech Stack:** Menghapus "To be decided" pada CSS dan menegaskan penggunaan **Tailwind CSS**.
-2.  **Penambahan Library:** Mencantumkan **FPDF**, **PHPMailer**, dan **Chart.js** yang ditemukan dalam kode.
-3.  **Update Fitur:** Menambahkan detail tentang "Cetak Laporan PDF" dan "Reset Password via Email".
-4.  **Instruksi Konfigurasi:** Menambahkan langkah penting untuk me-rename `smtp_secrets.example.php` agar fitur email berfungsi.
-5.  **Struktur Folder:** Memperbarui pohon struktur agar sesuai dengan kondisi file saat ini (`/library`, `/pages/owner`).
-
-> *Dibuat untuk memenuhi Tugas Besar Praktikum Pemrograman Web - Laboratorium Teknik Komputer Unila.*
-
-
+**Laboratorium Teknik Komputer — Universitas Lampung**
