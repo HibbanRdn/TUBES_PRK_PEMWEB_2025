@@ -126,6 +126,42 @@ Fitur "Lupa Password" memerlukan konfigurasi email pengirim.
 4.  **Login Karyawan:** Logout dari Owner, lalu login menggunakan akun karyawan yang baru dibuat untuk mengakses fitur POS atau Gudang.
 
 ---
+
+## 📸 Screenshot Aplikasi
+
+### 1. Halaman Utama & Autentikasi
+Tampilan landing page yang modern dan responsif, serta fitur registrasi dan pemulihan akun yang aman.
+
+| Landing Page | Login |
+| :---: | :---: |
+| ![Landing Page](docs/index.png) | ![Login](docs/login.png) |
+
+| Registrasi Owner | Lupa Password |
+| :---: | :---: |
+| ![Register](docs/register.png) | ![Forgot Password](docs/forgot.png) |
+
+### 2. Panel Owner (Pemilik)
+Dashboard analitik lengkap untuk memantau performa bisnis dan laporan keuangan.
+
+| Dashboard Ringkasan | Laporan Penjualan |
+| :---: | :---: |
+| ![Dashboard Owner](docs/dashboardOwner.png) | ![Laporan Owner](docs/laporanOwner.png) |
+
+### 3. Panel Gudang (Inventory)
+Manajemen stok barang yang mudah dengan fitur alert stok menipis.
+
+| Dashboard Gudang | Edit Stok Barang |
+| :---: | :---: |
+| ![Admin Gudang](docs/adminGudang.png) | ![Edit Stock](docs/editStock.png) |
+
+### 4. Panel Kasir (Point of Sale)
+Antarmuka kasir yang cepat, mendukung pencarian barang via keyboard (F2).
+
+| Halaman Transaksi Kasir | Konfirmasi Logout |
+| :---: | :---: |
+| ![Cashier](docs/cashier.png) | ![Logout](docs/logout.png) |
+
+---
 > **Catatan Pengembangan:**  
 > Pastikan koneksi internet aktif saat menjalankan aplikasi karena **Tailwind CSS** dan **Chart.js** dimuat melalui CDN.
 
