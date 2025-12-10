@@ -140,12 +140,20 @@ Tampilan landing page yang modern dan responsif, serta fitur registrasi dan pemu
 | :---: | :---: |
 | ![Register](docs/register.png) | ![Forgot Password](docs/forgot.png) |
 
+| Reset Password | Hubungi Owner |
+| :---: | :---: |
+| ![Ubah Password](docs/resetPassword.png) | ![Hubungi Owner](docs/cariOwner.png) |
+
 ### 2. Panel Owner (Pemilik)
 Dashboard analitik lengkap untuk memantau performa bisnis dan laporan keuangan.
 
 | Dashboard Ringkasan | Laporan Penjualan |
 | :---: | :---: |
 | ![Dashboard Owner](docs/dashboardOwner.png) | ![Laporan Owner](docs/laporanOwner.png) |
+
+| Menejemen Karyawan | Pengaturan |
+| :---: | :---: |
+| ![Menejemen Karyawan](docs/storeEmployee.png) | ![Laporan Owner](docs/settings.png) |
 
 ### 3. Panel Gudang (Inventory)
 Manajemen stok barang yang mudah dengan fitur alert stok menipis.
@@ -157,9 +165,20 @@ Manajemen stok barang yang mudah dengan fitur alert stok menipis.
 ### 4. Panel Kasir (Point of Sale)
 Antarmuka kasir yang cepat, mendukung pencarian barang via keyboard (F2).
 
-| Halaman Transaksi Kasir | Konfirmasi Logout |
+| Halaman Transaksi Kasir | Riwayat Penjualan |
 | :---: | :---: |
-| ![Cashier](docs/cashier.png) | ![Logout](docs/logout.png) |
+| ![Cashier](docs/cashier.png) | ![Logout](docs/riwayatCashier.png) |
+
+| Cetak Struk | 
+| :---: | 
+| ![Cashier](docs/cetakStruk.png) |
+
+### 5. Laporan & Struk
+Output Laporan Penjualan dan Struk yang bisa diunduh.
+
+| Laporan Penjualan | Struk Kasir |
+| :---: | :---: |
+| ![Cashier](docs/cetakLaporan.png) | ![Logout](docs/struk.png) |
 
 ---
 > **Catatan Pengembangan:**  
