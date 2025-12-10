@@ -7,7 +7,6 @@ ini_set('display_errors', 1);
 session_start();
 require_once '../../config/database.php';
 
-// 1. Cek Apakah User adalah Owner
 if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true || $_SESSION['role'] !== 'owner') {
     header("Location: ../../auth/login.php");
     exit;
@@ -16,7 +15,7 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true || $_SESSION
 $owner_id = $_SESSION['user_id'];
 $message = "";
 
-// 2. Ambil Data Toko Milik Owner
+// 1. Ambil Data Toko Punya Owner
 $sql_store = "SELECT id, name FROM stores WHERE owner_id = ? LIMIT 1";
 $stmt_store = mysqli_prepare($conn, $sql_store);
 mysqli_stmt_bind_param($stmt_store, "i", $owner_id);
@@ -29,7 +28,7 @@ if (!$store) {
 }
 $store_id = $store['id'];
 
-// --- LOGIKA EDIT: Cek apakah sedang mode edit ---
+// LOGIKA EDIT: Cek apakah sedang mode edit
 $edit_mode = false;
 $edit_data = null;
 
@@ -56,7 +55,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $role     = $_POST['role'];
     $password = $_POST['password']; // Bisa kosong jika mode edit
 
-    // --- A. ADD USER ---
+    // A. ADD USER
     if ($action == 'add') {
         if (!empty($fullname) && !empty($username) && !empty($password)) {
             // Cek username kembar di toko ini
@@ -75,7 +74,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
         }
     }
-    // --- B. UPDATE USER ---
+    // B. UPDATE USER
     elseif ($action == 'update') {
         $emp_id = $_POST['emp_id'];
         
@@ -134,6 +133,5 @@ while($row = mysqli_fetch_assoc($employees)) {
     if($row['role'] == 'kasir') $total_kasir++;
     else $total_gudang++;
 }
-// Reset pointer agar bisa diloop ulang di Frontend
 mysqli_data_seek($employees, 0);
 ?>

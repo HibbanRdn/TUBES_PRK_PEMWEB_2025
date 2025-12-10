@@ -1,6 +1,6 @@
 <?php
 session_start();
-// Redirect jika sudah login
+// Redirect 
 if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
     header("Location: ../pages/dashboard.php");
     exit;
@@ -42,7 +42,6 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
     </script>
     
     <style>
-        /* Menggunakan style animasi yang sama dengan login.php */
         @keyframes float { 0%, 100% { transform: translateY(0px) rotate(0deg); } 50% { transform: translateY(-20px) rotate(5deg); } }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes slideInRight { from { opacity: 0; transform: translateX(50px); } to { opacity: 1; transform: translateX(0); } }

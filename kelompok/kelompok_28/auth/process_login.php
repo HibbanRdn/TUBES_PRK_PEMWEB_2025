@@ -1,18 +1,14 @@
 <?php
-// Mulai session
 session_start();
-
-// Panggil file koneksi database
 require_once '../config/database.php';
 
 // Cek apakah form disubmit
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
-    // Ambil dan bersihkan data dari form
     $username = trim($_POST['username']);
     $password = trim($_POST['password']);
 
-    // Validasi kosong
+    // Validasi 
     if (empty($username) || empty($password)) {
         header("Location: login.php?error=empty");
         exit;
@@ -26,23 +22,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         mysqli_stmt_execute($stmt);
         mysqli_stmt_store_result($stmt);
         
-        // Jika ditemukan di tabel owners
         if (mysqli_stmt_num_rows($stmt) == 1) {
             mysqli_stmt_bind_result($stmt, $id, $db_username, $db_password, $fullname);
             mysqli_stmt_fetch($stmt);
 
             if (password_verify($password, $db_password)) {
-                // Set Session Owner
                 $_SESSION['loggedin'] = true;
                 $_SESSION['user_id'] = $id;
                 $_SESSION['username'] = $db_username;
-                $_SESSION['role'] = 'owner'; // Role manual karena owner tidak punya kolom role
+                $_SESSION['role'] = 'owner'; 
                 $_SESSION['fullname'] = $fullname;
                 
-                // Owner mungkin punya banyak toko, store_id biasanya dipilih nanti di dashboard
-                // atau ambil toko pertama jika single-store:
-                // $_SESSION['store_id'] = ... (opsional)
-
                 header("Location: ../redirect.php");
                 exit;
             } else {
@@ -74,12 +64,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
 
             if (password_verify($password, $db_password)) {
-                // Set Session Employee
                 $_SESSION['loggedin'] = true;
                 $_SESSION['user_id'] = $id;
-                $_SESSION['store_id'] = $store_id; // Karyawan terikat toko tertentu
+                $_SESSION['store_id'] = $store_id; 
                 $_SESSION['username'] = $db_username;
-                $_SESSION['role'] = $role; // 'admin_gudang' atau 'kasir'
+                $_SESSION['role'] = $role; 
                 $_SESSION['fullname'] = $fullname;
 
                 header("Location: ../redirect.php");
@@ -89,7 +78,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 exit;
             }
         } else {
-            // Username tidak ditemukan di Owner maupun Employee
             header("Location: login.php?error=invalid");
             exit;
         }
@@ -97,6 +85,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
-// Tutup koneksi
 mysqli_close($conn);
 ?>

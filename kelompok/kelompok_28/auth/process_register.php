@@ -26,7 +26,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // 4. Cek Apakah Username atau Email sudah dipakai di tabel OWNERS
-    // (Kita menggunakan Prepared Statement untuk keamanan)
     $sql_check = "SELECT id FROM owners WHERE username = ? OR email = ?";
     if ($stmt = mysqli_prepare($conn, $sql_check)) {
         mysqli_stmt_bind_param($stmt, "ss", $username, $email);
@@ -34,18 +33,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         mysqli_stmt_store_result($stmt);
         
         if (mysqli_stmt_num_rows($stmt) > 0) {
-            // Cek detail mana yang duplikat (opsional, tapi bagus untuk UX)
-            // Untuk simplifikasi, kita asumsi username dulu
             header("Location: register.php?error=username_taken"); // Atau email_taken
             exit;
         }
         mysqli_stmt_close($stmt);
     }
 
-    // 5. Insert Data Baru
     $password_hash = password_hash($password, PASSWORD_DEFAULT);
     
-    // Query Insert (id auto increment)
     $sql_insert = "INSERT INTO owners (fullname, email, phone, username, password) VALUES (?, ?, ?, ?, ?)";
     
     if ($stmt = mysqli_prepare($conn, $sql_insert)) {
@@ -57,7 +52,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             header("Location: login.php?registered=success");
             exit;
         } else {
-            // Gagal Eksekusi
+            // Gagal
             header("Location: register.php?error=db_error");
             exit;
         }

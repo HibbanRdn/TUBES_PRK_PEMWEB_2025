@@ -1,15 +1,13 @@
 <?php 
 // FILE: pages/kasir/dashboard.php
 
-// 1. Cek Session & Load Backend
+// Cek Session & Load Backend
 if (session_status() === PHP_SESSION_NONE) { session_start(); }
 require_once '../../process/process_cashier.php'; 
 
-// 2. Ambil Flash Message (Pesan Sukses Transaksi)
 $trx_data = isset($_SESSION['success_trx']) ? $_SESSION['success_trx'] : null;
 if ($trx_data) { unset($_SESSION['success_trx']); }
 
-// 3. Fallback Data Produk (Mencegah error jika database kosong/koneksi putus)
 $products = $products ?? []; 
 $page_title = "Kasir - " . ($_SESSION['fullname'] ?? 'Staff');
 ?>
@@ -33,7 +31,6 @@ $page_title = "Kasir - " . ($_SESSION['fullname'] ?? 'Staff');
             overflow-x: hidden; 
         }
         
-        /* --- DESIGN SYSTEM --- */
         .glass-effect {
             background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(12px);
@@ -50,7 +47,6 @@ $page_title = "Kasir - " . ($_SESSION['fullname'] ?? 'Staff');
             background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
         }
         
-        /* Animations */
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes scaleIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
@@ -77,17 +73,14 @@ $page_title = "Kasir - " . ($_SESSION['fullname'] ?? 'Staff');
         .hover-lift:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1); }
         .active-press:active { transform: scale(0.98); }
         
-        /* Custom Scrollbar */
         .custom-scrollbar::-webkit-scrollbar { width: 5px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-        /* Hide Input Arrows */
         input[type=number]::-webkit-inner-spin-button, 
         input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
         
-        /* Cart Item Transition */
         .cart-item {
             transition: all 0.3s ease;
         }
@@ -97,7 +90,6 @@ $page_title = "Kasir - " . ($_SESSION['fullname'] ?? 'Staff');
             transform: translateX(100px);
         }
         
-        /* Loading State */
         .btn-loading {
             position: relative;
             pointer-events: none;
@@ -122,7 +114,6 @@ $page_title = "Kasir - " . ($_SESSION['fullname'] ?? 'Staff');
             to { transform: rotate(360deg); }
         }
         
-        /* Toast Notification */
         .toast {
             position: fixed;
             bottom: 20px;
@@ -403,22 +394,13 @@ $page_title = "Kasir - " . ($_SESSION['fullname'] ?? 'Staff');
     </div>
 
 <script>
-    // ========================================
-    // 1. STATE MANAGEMENT
-    // ========================================
     let cart = [];
     let currentTotal = 0;
     let searchDebounce = null;
 
-    // ========================================
-    // 2. UTILITY FUNCTIONS
-    // ========================================
     const formatRupiah = (num) => 'Rp ' + parseInt(num).toLocaleString('id-ID');
     const parseRupiah = (str) => parseInt(str.replace(/[^0-9]/g, '')) || 0;
 
-    // ========================================
-    // 3. TOAST NOTIFICATION SYSTEM
-    // ========================================
     function showToast(title, message, type = 'success') {
         const toast = document.getElementById('toastNotification');
         const toastContent = document.getElementById('toastContent');
@@ -460,9 +442,6 @@ $page_title = "Kasir - " . ($_SESSION['fullname'] ?? 'Staff');
         }, 3000);
     }
 
-    // ========================================
-    // 4. SEARCH FUNCTIONALITY (OPTIMIZED)
-    // ========================================
     const searchInput = document.getElementById('searchInput');
     const productGrid = document.getElementById('productGrid');
     const noResults = document.getElementById('noSearchResults');
@@ -522,9 +501,6 @@ $page_title = "Kasir - " . ($_SESSION['fullname'] ?? 'Staff');
         searchInput.focus();
     }
 
-    // ========================================
-    // 5. CART MANAGEMENT (ENHANCED)
-    // ========================================
     function addToCart(id, name, price, stock) {
         // Type safety
         id = parseInt(id); 
@@ -552,11 +528,9 @@ $page_title = "Kasir - " . ($_SESSION['fullname'] ?? 'Staff');
         
         renderCart();
         
-        // Auto scroll to bottom on mobile
         const container = document.getElementById('cartItemsContainer');
         setTimeout(() => container.scrollTop = container.scrollHeight, 50);
         
-        // Auto open cart on mobile
         if(window.innerWidth < 1024) {
             openCart();
         }
@@ -585,7 +559,6 @@ $page_title = "Kasir - " . ($_SESSION['fullname'] ?? 'Staff');
 
     function removeFromCart(id, name) {
         if (confirm(`Hapus ${name} dari keranjang?`)) {
-            // Add removing animation
             const itemElement = document.querySelector(`[data-cart-id="${id}"]`);
             if (itemElement) {
                 itemElement.classList.add('removing');
@@ -668,9 +641,6 @@ $page_title = "Kasir - " . ($_SESSION['fullname'] ?? 'Staff');
         }
     }
 
-    // ========================================
-    // 6. PAYMENT CALCULATION
-    // ========================================
     const payInputDisplay = document.getElementById('payAmountDisplay');
     const payInputHidden = document.getElementById('payAmountInput');
 
@@ -745,9 +715,6 @@ $page_title = "Kasir - " . ($_SESSION['fullname'] ?? 'Staff');
         }
     }
 
-    // ========================================
-    // 7. FORM SUBMISSION
-    // ========================================
     function handleSubmit(event) {
         if (cart.length === 0) { 
             event.preventDefault();
@@ -760,7 +727,6 @@ $page_title = "Kasir - " . ($_SESSION['fullname'] ?? 'Staff');
             return false;
         }
 
-        // Add loading state
         const btn = document.getElementById('btnProcess');
         const btnText = document.getElementById('btnProcessText');
         btn.classList.add('btn-loading');
@@ -770,9 +736,6 @@ $page_title = "Kasir - " . ($_SESSION['fullname'] ?? 'Staff');
         return true;
     }
 
-    // ========================================
-    // 8. MOBILE CART PANEL
-    // ========================================
     function toggleCart() {
         const panel = document.getElementById('cartPanel');
         const overlay = document.getElementById('cartOverlay');
@@ -794,9 +757,6 @@ $page_title = "Kasir - " . ($_SESSION['fullname'] ?? 'Staff');
         overlay.classList.add('hidden');
     }
 
-    // ========================================
-    // 9. SUCCESS MODAL
-    // ========================================
     const successData = <?= json_encode($trx_data) ?>;
     if (successData) {
         const modal = document.getElementById('successModal');
@@ -810,8 +770,6 @@ $page_title = "Kasir - " . ($_SESSION['fullname'] ?? 'Staff');
         document.getElementById('modalTotal').innerText = formatRupiah(successData.total);
         document.getElementById('modalChange').innerText = formatRupiah(successData.change);
 
-        // Play success sound (optional)
-        // new Audio('/assets/success.mp3').play().catch(() => {});
     }
 
     function closeSuccessModal() {
@@ -833,9 +791,6 @@ $page_title = "Kasir - " . ($_SESSION['fullname'] ?? 'Staff');
         }, 300);
     }
 
-    // ========================================
-    // 10. KEYBOARD SHORTCUTS
-    // ========================================
     document.addEventListener('keydown', (e) => {
         // F2: Focus search
         if (e.key === 'F2') { 
@@ -843,7 +798,6 @@ $page_title = "Kasir - " . ($_SESSION['fullname'] ?? 'Staff');
             searchInput.focus(); 
         }
         
-        // Escape: Close modal or cart
         if (e.key === 'Escape') {
             if (!document.getElementById('successModal').classList.contains('hidden')) {
                 closeSuccessModal();
@@ -852,7 +806,6 @@ $page_title = "Kasir - " . ($_SESSION['fullname'] ?? 'Staff');
             }
         }
 
-        // Enter: Process payment (if button is enabled)
         if (e.key === 'Enter' && e.target.id === 'payAmountDisplay') {
             const btn = document.getElementById('btnProcess');
             if (!btn.disabled) {
@@ -861,9 +814,6 @@ $page_title = "Kasir - " . ($_SESSION['fullname'] ?? 'Staff');
         }
     });
 
-    // ========================================
-    // 11. REAL-TIME CLOCK
-    // ========================================
     function updateDateTime() {
         const now = new Date();
         const options = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' };
@@ -880,9 +830,7 @@ $page_title = "Kasir - " . ($_SESSION['fullname'] ?? 'Staff');
     setInterval(updateDateTime, 1000);
     updateDateTime();
 
-    // ========================================
-    // 12. INITIALIZE
-    // ========================================
+
     document.addEventListener('DOMContentLoaded', function() {
         // Focus search on load
         if (searchInput && window.innerWidth >= 1024) {
@@ -895,9 +843,6 @@ $page_title = "Kasir - " . ($_SESSION['fullname'] ?? 'Staff');
         console.log('%c⚡ Performance Mode: Active', 'color: #10b981; font-size: 12px; font-weight: bold;');
     });
 
-    // ========================================
-    // 13. SERVICE WORKER (OPTIONAL - FOR PWA)
-    // ========================================
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             // navigator.serviceWorker.register('/sw.js').catch(() => {});

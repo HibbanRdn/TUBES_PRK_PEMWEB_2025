@@ -1,6 +1,5 @@
 <?php
 // FILE: pages/kasir/cetak_struk.php
-
 session_start();
 require('../../config/database.php');
 require('../../library/fpdf.php');
@@ -31,7 +30,7 @@ $trx = $stmt->get_result()->fetch_assoc();
 
 if (!$trx) { die("Data tidak ditemukan."); }
 
-// 3. Ambil Item & Simpan ke Array (PENTING untuk hitung tinggi kertas)
+// 3. Ambil Item & Simpan ke Array 
 $sql_items = "SELECT td.qty, td.price_at_transaction, td.subtotal, p.name 
               FROM transaction_details td
               JOIN products p ON td.product_id = p.id
@@ -47,22 +46,19 @@ while ($row = $result_items->fetch_assoc()) {
 }
 
 // 4. Hitung Tinggi Kertas Dinamis
-// Estimasi: Header (50mm) + Footer (40mm) + (Jumlah Item x 12mm)
 $height_per_item = 10; 
 $base_height = 80; 
 $paper_height = $base_height + (count($items) * $height_per_item);
 
-// 5. Setup PDF (Ukuran Custom Sesuai Isi)
+// 5. Setup PDF 
 $pdf = new FPDF('P', 'mm', array(80, $paper_height));
 $pdf->AddPage();
 $pdf->SetMargins(4, 2, 4);
 $pdf->SetAutoPageBreak(false);
 
-// --- HELPER: Rupiah ---
 function rp($angka) { return number_format($angka, 0, ',', '.'); }
 
-// --- BAGIAN 1: HEADER (Full Width Centering) ---
-// Kita set X ke 0 agar centering dihitung dari tepi kertas, bukan margin
+// BAGIAN 1: Header Toko
 $pdf->SetFont('Arial', 'B', 15);
 $pdf->SetX(0); 
 $pdf->Cell(80, 6, strtoupper($trx['store_name']), 0, 1, 'C');
@@ -76,13 +72,12 @@ if (!empty($trx['store_phone'])) {
     $pdf->Cell(80, 4, 'Telp: ' . $trx['store_phone'], 0, 1, 'C');
 }
 
-// Garis Pemisah
 $pdf->Ln(2);
-$pdf->SetX(2); // Geser dikit biar garisnya pas tengah visual
-$pdf->Cell(76, 0, str_repeat('-', 48), 0, 1, 'C');
+$pdf->SetX(2); 
+$pdf->Cell(76, 0, str_repeat('-', 64), 0, 1, 'C');
 $pdf->Ln(3);
 
-// --- BAGIAN 2: INFO ---
+// BAGIAN 2: INFO
 $pdf->SetFont('Arial', '', 8);
 $pdf->Cell(15, 4, 'No Struk', 0, 0);
 $pdf->Cell(2, 4, ':', 0, 0);
@@ -98,10 +93,10 @@ $pdf->Cell(55, 4, substr($trx['cashier_name'] ?? 'Admin', 0, 18), 0, 1);
 
 $pdf->Ln(2);
 $pdf->SetX(2);
-$pdf->Cell(76, 0, str_repeat('-', 48), 0, 1, 'C');
+$pdf->Cell(76, 0, str_repeat('-', 64), 0, 1, 'C');
 $pdf->Ln(2);
 
-// --- BAGIAN 3: ITEM ---
+// BAGIAN 3: ITEM
 foreach ($items as $item) {
     // Baris 1: Nama Barang
     $pdf->SetFont('Arial', 'B', 9);
@@ -112,13 +107,13 @@ foreach ($items as $item) {
     $rincian = $item['qty'] . ' x ' . rp($item['price_at_transaction']);
     $subtotal = rp($item['subtotal']);
 
-    $pdf->Cell(40, 4, '   ' . $rincian, 0, 0, 'L'); // Indentasi
+    $pdf->Cell(40, 4, '   ' . $rincian, 0, 0, 'L');
     $pdf->Cell(32, 4, $subtotal, 0, 1, 'R');
 }
 
 $pdf->Ln(2);
 $pdf->SetX(2);
-$pdf->Cell(76, 0, str_repeat('-', 48), 0, 1, 'C');
+$pdf->Cell(76, 0, str_repeat('-', 64), 0, 1, 'C');
 $pdf->Ln(2);
 
 // --- BAGIAN 4: TOTAL ---
@@ -135,7 +130,7 @@ $pdf->Cell(37, 4, rp($trx['change_amount']), 0, 1, 'R');
 
 $pdf->Ln(4);
 $pdf->SetX(2);
-$pdf->Cell(76, 0, str_repeat('-', 48), 0, 1, 'C');
+$pdf->Cell(76, 0, str_repeat('-', 64), 0, 1, 'C');
 $pdf->Ln(4);
 
 // --- BAGIAN 5: FOOTER ---

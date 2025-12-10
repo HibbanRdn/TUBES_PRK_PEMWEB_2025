@@ -16,7 +16,7 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true || !isset($_
 $store_id = $_SESSION['store_id'];
 $action = $_GET['act'] ?? '';
 
-// --- FUNGSI VALIDASI ---
+// FUNGSI VALIDASI 
 function validateInput($name, $price, $stock) {
     if (empty($name)) {
         return "Nama barang tidak boleh kosong.";
@@ -30,7 +30,7 @@ function validateInput($name, $price, $stock) {
     return true; 
 }
 
-// --- LOGIKA TAMBAH BARANG (CREATE) ---
+// LOGIKA TAMBAH BARANG (CREATE)
 if ($action == 'add' && $_SERVER['REQUEST_METHOD'] == 'POST') {
     
     $name        = mysqli_real_escape_string($conn, $_POST['name']);
@@ -56,7 +56,7 @@ if ($action == 'add' && $_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-// --- LOGIKA UPDATE BARANG (EDIT) ---
+// LOGIKA UPDATE BARANG (EDIT)
 elseif ($action == 'update' && $_SERVER['REQUEST_METHOD'] == 'POST') {
     
     $id          = (int) $_POST['id'];
@@ -87,7 +87,7 @@ elseif ($action == 'update' && $_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-// --- LOGIKA HAPUS BARANG ---
+// LOGIKA HAPUS BARANG
 elseif ($action == 'delete') {
     $id = (int) $_GET['id'];
     $query = "UPDATE products SET is_active = 0 WHERE id = '$id' AND store_id = '$store_id'";
@@ -99,7 +99,7 @@ elseif ($action == 'delete') {
     }
 }
 
-// --- LOGIKA TAMBAH KATEGORI ---
+// LOGIKA TAMBAH KATEGORI
 elseif ($action == 'add_category') {
     $name = mysqli_real_escape_string($conn, $_POST['category_name']);
     

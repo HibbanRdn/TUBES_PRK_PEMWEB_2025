@@ -1,14 +1,11 @@
 <?php
 // FILE: process/process_cashier.php
-
-// 1. Session Check yang Aman
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
 require_once __DIR__ . '/../config/database.php'; 
 
-// Variabel Default
 $store_name = 'DigiNiaga POS';
 $store_address = '-';
 $products = [];
@@ -22,7 +19,7 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
 $store_id = $_SESSION['store_id'] ?? 0;
 $employee_id = $_SESSION['user_id'] ?? 0;
 
-// === BAGIAN 1: GET DATA (Untuk tampilan Dashboard) ===
+// BAGIAN 1: GET DATA (Untuk tampilan Dashboard)
 if ($store_id > 0) {
     // Ambil Nama Toko
     $sql_store = "SELECT name, address FROM stores WHERE id = ? LIMIT 1";
@@ -38,11 +35,7 @@ if ($store_id > 0) {
     }
 
     // Ambil Produk
-    // PENTING: Hanya ambil jika request GET (bukan saat submit transaksi)
     if ($_SERVER['REQUEST_METHOD'] != 'POST') {
-        // PERUBAHAN: Menghapus 'AND p.stock > 0' 
-        // Agar frontend bisa menampilkan produk yang statusnya 'Sold Out/Habis'
-        // Tambahkan p.code jika kolom kode produk ada di database Anda
         $query_product = "SELECT p.*, c.name as category_name 
                           FROM products p 
                           LEFT JOIN categories c ON p.category_id = c.id 
@@ -61,14 +54,12 @@ if ($store_id > 0) {
     }
 }
 
-// === BAGIAN 2: PROSES TRANSAKSI (POST) ===
+// BAGIAN 2: PROSES TRANSAKSI (POST)
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['process_transaction'])) {
     
     // 1. Ambil & Validasi Data Input
     $cart_data = json_decode($_POST['cart_data'], true);
     
-    // Bersihkan format angka (hapus Rp, titik, koma jika ada sisa dari frontend)
-    // Namun idealnya frontend sudah mengirim raw number di input hidden
     $post_total = (float) $_POST['total_amount'];
     $post_pay   = (float) $_POST['pay_amount'];
     
@@ -80,14 +71,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['process_transaction'])
     // 2. Hitung Ulang Total di Server (Security: Jangan percaya nominal dari frontend)
     $server_total = 0;
     
-    // Kita perlu loop dulu untuk hitung total, validasi harga database nanti bisa ditambahkan
-    // Untuk performa, kita percaya harga yang dikirim di cart_data tapi stok divalidasi
     foreach($cart_data as $item) {
         $server_total += ($item['price'] * $item['qty']);
     }
 
-    // Cek Pembayaran
-    // Gunakan epsilon 0.01 untuk toleransi floating point comparison
     if ($post_pay < ($server_total - 0.01)) { 
         echo "<script>alert('Uang pembayaran kurang!'); window.history.back();</script>"; 
         exit;
@@ -117,8 +104,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['process_transaction'])
         $sql_det = "INSERT INTO transaction_details (transaction_id, product_id, qty, price_at_transaction, subtotal) VALUES (?, ?, ?, ?, ?)";
         $stmt_det = $conn->prepare($sql_det);
 
-        // PERUBAHAN PENTING: Update stok dengan kondisi stock >= qty
-        // Ini mencegah stok menjadi minus jika ada race condition
         $sql_stk = "UPDATE products SET stock = stock - ? WHERE id = ? AND store_id = ? AND stock >= ?";
         $stmt_stk = $conn->prepare($sql_stk);
 
@@ -161,7 +146,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['process_transaction'])
 
     } catch (Exception $e) {
         mysqli_rollback($conn);
-        // Log error jika perlu: error_log($e->getMessage());
         echo "<script>alert('Transaksi Gagal: " . addslashes($e->getMessage()) . "'); window.history.back();</script>";
         exit;
     }

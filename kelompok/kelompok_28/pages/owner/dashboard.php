@@ -1,6 +1,5 @@
 <?php 
 // FILE: dashboard.php
-// Memanggil logika backend sebelum merender HTML
 require_once '../../process/process_owner.php'; 
 ?>
 

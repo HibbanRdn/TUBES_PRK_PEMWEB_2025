@@ -2,12 +2,10 @@
 // --- BACKEND: Menangani Request Pencarian (AJAX) ---
 if (isset($_GET['action']) && $_GET['action'] == 'search') {
     
-    // Matikan error report visual agar tidak merusak format JSON
     error_reporting(0);
     ini_set('display_errors', 0);
     header('Content-Type: application/json');
 
-    // 1. CEK PATH DATABASE (Agar tidak error 404/500)
     $path_subfolder = '../config/database.php';
     $path_root      = 'config/database.php';
 
@@ -20,7 +18,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'search') {
         exit;
     }
 
-    // Cek koneksi dari file database.php
+    // 1. CEK KONEKSI DATABASE
     if (!isset($conn)) {
         echo json_encode(['error' => 'Variabel $conn tidak ditemukan di database.php']);
         exit;
@@ -43,8 +41,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'search') {
         $data = array();
         
         while ($row = $result->fetch_assoc()) {
-            // 3. KEAMANAN (Sanitasi XSS)
-            // Membersihkan data agar aman ditampilkan di HTML
+            // 3. KEAMANAN!!!
             $safe_row = array_map(function($value) {
                 return htmlspecialchars($value ?? '', ENT_QUOTES, 'UTF-8');
             }, $row);
@@ -59,7 +56,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'search') {
         echo json_encode(['error' => 'Gagal menyiapkan query database']);
     }
     
-    exit; // Stop eksekusi HTML di bawah
+    exit; 
 }
 ?>
 
@@ -149,23 +146,19 @@ if (isset($_GET['action']) && $_GET['action'] == 'search') {
             loading.classList.remove('hidden');
             emptyState.classList.add('hidden');
 
-            // Debounce
             timeout = setTimeout(() => {
                 fetch(`?action=search&q=${encodeURIComponent(query)}`)
                     .then(response => {
-                        // Cek apakah response valid JSON
                         const contentType = response.headers.get("content-type");
                         if (contentType && contentType.indexOf("application/json") !== -1) {
                             return response.json();
                         } else {
-                            // Jika bukan JSON, mungkin ada error PHP fatal
                             throw new Error("Respons bukan JSON. Cek path database.");
                         }
                     })
                     .then(data => {
                         loading.classList.add('hidden');
                         if(data.error) {
-                            // Jika backend kirim pesan error spesifik
                             resultsContainer.innerHTML = `<p class="text-red-500 text-center text-sm bg-red-50 p-3 rounded-lg border border-red-200">${data.error}</p>`;
                         } else {
                             renderResults(data);

@@ -1,6 +1,5 @@
 <?php 
 // FILE: users.php
-// Memanggil logika backend
 require_once '../../process/process_users.php'; 
 ?>
 

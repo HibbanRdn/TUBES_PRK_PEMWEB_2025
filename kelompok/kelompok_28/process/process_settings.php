@@ -17,9 +17,7 @@ $owner_id = $_SESSION['user_id'];
 $fullname = $_SESSION['fullname']; // Ambil nama dari session untuk navbar
 $message = ""; 
 
-// ---------------------------------------------------------
-// LOGIKA PENYIMPANAN DATA (HANDLE POST REQUEST)
-// ---------------------------------------------------------
+// 2. LOGIKA UPDATE SETTINGS OWNER & STORE
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
     // A. UPDATE PROFIL OWNER
@@ -33,9 +31,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             mysqli_stmt_bind_param($stmt, "ssi", $fullname_post, $phone, $owner_id);
             
             if (mysqli_stmt_execute($stmt)) {
-                $_SESSION['fullname'] = $fullname_post; // Update session nama
+                $_SESSION['fullname'] = $fullname_post;
                 $message = "success_profile";
-                $fullname = $fullname_post; // Update variabel nama untuk tampilan saat ini
+                $fullname = $fullname_post;
             } else {
                 $message = "error_db";
             }
@@ -72,9 +70,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
-// ---------------------------------------------------------
-// AMBIL DATA DARI DATABASE (Untuk ditampilkan di Form)
-// ---------------------------------------------------------
 // 1. Ambil Data Owner
 $sql_owner = "SELECT fullname, email, phone, username FROM owners WHERE id = ?";
 $stmt = mysqli_prepare($conn, $sql_owner);

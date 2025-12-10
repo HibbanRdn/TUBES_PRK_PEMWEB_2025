@@ -26,7 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit;
     }
     
-    // 4. Validasi Token Ulang (Double Check Security)
+    // 4. Validasi Token
     $token_hash = hash('sha256', $token);
     $now = date("Y-m-d H:i:s");
     
@@ -37,7 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         mysqli_stmt_store_result($stmt);
         
         if (mysqli_stmt_num_rows($stmt) == 1) {
-            // 5. Update Password & Hapus Token (Supaya link tidak bisa dipakai 2x)
+            // 5. Update Password & Hapus Token 
             $new_hash = password_hash($pass1, PASSWORD_DEFAULT);
             $sql_update = "UPDATE owners SET password = ?, reset_token_hash = NULL, reset_token_expires_at = NULL WHERE email = ?";
             
@@ -45,7 +45,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 mysqli_stmt_bind_param($stmt_up, "ss", $new_hash, $email);
                 
                 if (mysqli_stmt_execute($stmt_up)) {
-                    // Sukses - Redirect ke login dengan pesan sukses
+                    // Sukses
+                    // Redirect ke login dengan pesan sukses
                     mysqli_stmt_close($stmt_up);
                     mysqli_stmt_close($stmt);
                     mysqli_close($conn);
@@ -58,7 +59,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 }
             }
         } else {
-            // Token expired atau tidak valid
+            // Token expired atau ga valid
             header("Location: reset_password.php?token=$token&email=$email&error=invalid");
             exit;
         }
@@ -71,7 +72,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
     mysqli_close($conn);
 } else {
-    // Jika bukan POST request
     header("Location: forgot_password.php");
     exit;
 }

@@ -5,11 +5,9 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 session_start();
-// Pastikan path database sesuai dengan struktur folder Anda
 require_once '../../config/database.php';
 
 // 1. Cek Login & Role Owner
-// Jika user belum login atau bukan owner, tendang ke login page
 if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true || $_SESSION['role'] !== 'owner') {
     header("Location: ../../auth/login.php");
     exit;
@@ -19,7 +17,6 @@ $fullname = $_SESSION['fullname'];
 $owner_id = $_SESSION['user_id'];
 
 // 2. Ambil Store ID milik Owner
-// Menggunakan Prepared Statement untuk keamanan
 $sql_store = "SELECT id, name, address FROM stores WHERE owner_id = ? LIMIT 1";
 $stmt = mysqli_prepare($conn, $sql_store);
 mysqli_stmt_bind_param($stmt, "i", $owner_id);
@@ -29,17 +26,17 @@ $store = mysqli_fetch_assoc($res_store);
 
 // Default values (Persiapan variabel agar tidak error di FE jika null)
 $store_id = $store['id'] ?? 0;
-$store_name = $store['name'] ?? 'Nama Toko';     // Default jika belum ada
-$store_address = $store['address'] ?? 'Alamat';  // Default jika belum ada
+$store_name = $store['name'] ?? 'Nama Toko';     
+$store_address = $store['address'] ?? 'Alamat';  
 $has_store = ($store_id > 0); 
 
 // Inisialisasi variabel statistik
 $omzet_today = 0;
 $trx_count = 0;
 $low_stock = 0;
-$recent_trx = [];     // Akan berisi object result mysqli
-$chart_labels = [];   // Array untuk label grafik (Sen, Sel, Rab, dll)
-$chart_data = [];     // Array untuk data angka grafik
+$recent_trx = [];     
+$chart_labels = [];   
+$chart_data = [];     
 
 // 3. Hanya Jalankan Query Berat JIKA Toko Sudah Ada
 if ($has_store) {

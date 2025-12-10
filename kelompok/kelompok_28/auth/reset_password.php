@@ -5,7 +5,7 @@ $email = $_GET['email'] ?? '';
 $error = '';
 $valid_token = false;
 
-// Validasi Token saat halaman dibuka
+// Validasi Token 
 if ($token && $email) {
     $token_hash = hash('sha256', $token);
     $now = date("Y-m-d H:i:s");
@@ -118,7 +118,6 @@ if ($token && $email) {
 
     <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md animate-fadeInUp border border-gray-100">
         
-        <!-- Icon -->
         <div class="flex justify-center mb-6">
             <div class="bg-gradient-to-br from-brand-500 to-brand-700 rounded-full p-4 shadow-lg">
                 <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -127,17 +126,14 @@ if ($token && $email) {
             </div>
         </div>
 
-        <!-- Header -->
         <h2 class="text-3xl font-bold mb-2 text-center gradient-text">Buat Password Baru</h2>
         <p class="text-gray-600 text-center mb-6 text-sm">Masukkan password baru yang aman dan mudah diingat</p>
 
         <?php if ($valid_token): ?>
-            <!-- Form Reset Password -->
             <form action="process_reset.php" method="POST" class="space-y-5" id="resetForm">
                 <input type="hidden" name="token" value="<?= htmlspecialchars($token) ?>">
                 <input type="hidden" name="email" value="<?= htmlspecialchars($email) ?>">
                 
-                <!-- Password Baru -->
                 <div class="space-y-2">
                     <label class="block text-sm font-semibold text-gray-700">Password Baru</label>
                     <div class="relative">
@@ -156,7 +152,6 @@ if ($token && $email) {
                             </svg>
                         </button>
                     </div>
-                    <!-- Password Strength Indicator -->
                     <div class="flex gap-1 mt-2">
                         <div class="password-strength flex-1 bg-gray-200" id="strength1"></div>
                         <div class="password-strength flex-1 bg-gray-200" id="strength2"></div>
@@ -165,7 +160,6 @@ if ($token && $email) {
                     <p class="text-xs text-gray-500 mt-1" id="strengthText">Gunakan kombinasi huruf, angka, dan simbol</p>
                 </div>
 
-                <!-- Konfirmasi Password -->
                 <div class="space-y-2">
                     <label class="block text-sm font-semibold text-gray-700">Konfirmasi Password</label>
                     <div class="relative">
@@ -181,7 +175,6 @@ if ($token && $email) {
                     <p class="text-xs text-red-500 mt-1 hidden" id="matchError">Password tidak cocok</p>
                 </div>
 
-                <!-- Submit Button -->
                 <button type="submit" 
                         class="btn-gradient w-full text-white font-bold rounded-xl text-sm px-5 py-4 text-center transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 active:translate-y-0 mt-6">
                     <span class="relative z-10 flex items-center justify-center">
@@ -194,7 +187,6 @@ if ($token && $email) {
             </form>
 
         <?php else: ?>
-            <!-- Error State -->
             <div class="text-center space-y-4">
                 <div class="bg-gradient-to-r from-red-50 to-pink-50 border border-red-200 text-red-800 p-5 rounded-xl">
                     <svg class="w-12 h-12 text-red-500 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -214,7 +206,6 @@ if ($token && $email) {
             </div>
         <?php endif; ?>
 
-        <!-- Footer -->
         <div class="mt-6 text-center pt-4 border-t border-gray-100">
             <p class="text-xs text-gray-500 mb-2">Sudah punya akun?</p>
             <a href="login.php" class="inline-flex items-center text-sm font-semibold text-gray-600 hover:text-brand-600 transition-colors group">
@@ -227,7 +218,6 @@ if ($token && $email) {
     </div>
 
     <script>
-        // Toggle Password Visibility
         const togglePassword = document.getElementById('togglePassword');
         const passwordInput = document.getElementById('password');
         const eyeIcon = document.getElementById('eyeIcon');
@@ -245,7 +235,6 @@ if ($token && $email) {
             });
         }
         
-        // Password Strength Checker
         if (passwordInput) {
             passwordInput.addEventListener('input', function() {
                 const password = this.value;
@@ -258,8 +247,7 @@ if ($token && $email) {
                 if (password.length >= 6) strength++;
                 if (password.match(/[a-z]/) && password.match(/[A-Z]/)) strength++;
                 if (password.match(/[0-9]/) && password.match(/[^a-zA-Z0-9]/)) strength++;
-                
-                // Reset
+            
                 strength1.className = 'password-strength flex-1 bg-gray-200';
                 strength2.className = 'password-strength flex-1 bg-gray-200';
                 strength3.className = 'password-strength flex-1 bg-gray-200';
@@ -283,7 +271,6 @@ if ($token && $email) {
             });
         }
         
-        // Password Match Checker
         const confPassword = document.getElementById('conf_password');
         if (confPassword) {
             confPassword.addEventListener('input', function() {
@@ -296,7 +283,6 @@ if ($token && $email) {
             });
         }
         
-        // Form Submit with Validation
         const resetForm = document.getElementById('resetForm');
         if (resetForm) {
             resetForm.addEventListener('submit', function(e) {
@@ -316,7 +302,6 @@ if ($token && $email) {
             });
         }
         
-        // Input Focus Animation
         const inputs = document.querySelectorAll('input[type="password"]');
         inputs.forEach(input => {
             input.addEventListener('focus', function() {

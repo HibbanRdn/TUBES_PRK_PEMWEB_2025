@@ -1,9 +1,5 @@
 <?php
-/**
- * File: redirect.php
- * Fungsi: Mengarahkan user ke folder dashboard spesifik berdasarkan Role/Status.
- */
-
+// File: redirect.php
 session_start();
 
 if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {

@@ -2,7 +2,7 @@
 session_start();
 require_once '../../config/database.php';
 
-// --- 1. LOGIKA CEK LOGIN & SESSION ---
+// 1. LOGIKA CEK LOGIN & SESSION
 if (!isset($_SESSION['loggedin']) || $_SESSION['role'] !== 'admin_gudang') {
     header("Location: ../../auth/login.php"); 
     exit;
@@ -10,7 +10,6 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['role'] !== 'admin_gudang') {
     $fullname = $_SESSION['fullname'];
     $user_id = $_SESSION['user_id'];
     
-    // Inisialisasi variabel default
     $store_id = 0;
     $store_name = "DigiNiaga Store";
     $store_address = "Alamat tidak tersedia";
@@ -32,7 +31,7 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['role'] !== 'admin_gudang') {
     }
 }
 
-// --- 2. LOGIKA STATISTIK ---
+// 2. LOGIKA STOCK
 $stats_query = "SELECT 
                     COUNT(*) as total_items,
                     SUM(stock * price) as total_asset,
@@ -60,7 +59,6 @@ $stats = mysqli_fetch_assoc($stats_res);
             background: #f8fafc;
         }
         
-        /* Animasi & Efek Visual */
         .glass-effect { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(5px); }
         .animate-fadeIn { animation: fadeIn 0.6s ease-out; }
         .animate-slideUp { animation: slideUp 0.5s ease-out; }
@@ -83,7 +81,6 @@ $stats = mysqli_fetch_assoc($stats_res);
         }
         @keyframes iconGlow { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(10px, 10px); } }
 
-        /* Modal Animation Styles */
         .modal-enter { opacity: 0; pointer-events: none; transition: opacity 0.3s ease-out; }
         .modal-enter-active { opacity: 1; pointer-events: auto; }
         

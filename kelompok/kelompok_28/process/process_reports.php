@@ -55,7 +55,7 @@ $trend_labels = [];
 $trend_data = [];
 $cat_labels = [];
 $cat_data = [];
-$top_products = null; // Diinisialisasi null, nanti diisi result object
+$top_products = null; 
 
 if ($store_id > 0) {
     // A. RINGKASAN TOTAL

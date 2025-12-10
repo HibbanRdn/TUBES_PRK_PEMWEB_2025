@@ -7,18 +7,15 @@ ini_set('display_errors', 1);
 session_start();
 require_once '../../config/database.php';
 
-// 1. Cek Login & Role Owner
-// Pastikan user yang mengakses adalah owner yang sah
 if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true || $_SESSION['role'] !== 'owner') {
     header("Location: ../../auth/login.php");
     exit;
 }
 
 $owner_id = $_SESSION['user_id'];
-$fullname = $_SESSION['fullname']; // Variabel ini akan dipakai di Frontend
+$fullname = $_SESSION['fullname'];
 
-// 2. Cek Apakah Sudah Punya Toko
-// Jika sudah punya, redirect paksa ke dashboard (Mencegah double store)
+// 1. Cek Apakah Sudah Punya Toko
 $sql_check = "SELECT id FROM stores WHERE owner_id = ? LIMIT 1";
 $stmt = mysqli_prepare($conn, $sql_check);
 mysqli_stmt_bind_param($stmt, "i", $owner_id);
@@ -30,7 +27,7 @@ if (mysqli_num_rows(mysqli_stmt_get_result($stmt)) > 0) {
 
 $message = ""; // Variabel pesan untuk Frontend
 
-// 3. Proses Form Submit (POST)
+// 2. Proses Form Submit (POST)
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $store_name = trim($_POST['name']);
     $phone      = trim($_POST['phone']);
@@ -52,11 +49,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             mysqli_stmt_bind_param($stmt, "issss", $owner_id, $store_name, $phone, $address, $category);
             
             if (mysqli_stmt_execute($stmt)) {
-                // Sukses: Redirect ke Dashboard dengan parameter sukses
+                // Redirect ke Dashboard dengan parameter sukses
                 header("Location: dashboard.php?setup=success");
                 exit;
             } else {
-                // Gagal Query
                 $message = "<div class='flex items-center p-4 mb-6 text-sm text-red-800 border border-red-300 rounded-xl bg-red-50 animate-fadeInUp shadow-sm'>Terjadi kesalahan sistem: " . mysqli_error($conn) . "</div>";
             }
         }

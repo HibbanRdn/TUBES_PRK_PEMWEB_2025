@@ -1,11 +1,7 @@
 <?php
 // FILE: pages/kasir/history.php
-
-// 1. Konfigurasi & Session
 if (session_status() === PHP_SESSION_NONE) { session_start(); }
 
-// Pastikan file koneksi database Anda benar (sesuaikan path-nya)
-// Contoh sederhana koneksi langsung (sebaiknya dipisah di config/database.php):
 $host = 'localhost';
 $user = 'root'; // Sesuaikan user DB
 $pass = '';     // Sesuaikan password DB
@@ -18,8 +14,7 @@ if ($conn->connect_error) {
 
 // Cek Login & Store ID
 if (!isset($_SESSION['store_id'])) {
-    // Jika store_id belum ada di session, ambil dari tabel employees berdasarkan user login
-    if (isset($_SESSION['user_id'])) { // Asumsi id employee disimpan di session user_id
+    if (isset($_SESSION['user_id'])) { 
         $emp_id = $_SESSION['user_id'];
         $stmt_emp = $conn->prepare("SELECT store_id, fullname FROM employees WHERE id = ?");
         $stmt_emp->bind_param("i", $emp_id);
@@ -72,8 +67,6 @@ $transactions = [];
 while ($row = $result_trx->fetch_assoc()) {
     $trx_id = $row['id'];
     
-    // Ambil detail item untuk setiap transaksi
-    // Join ke tabel products untuk ambil nama barang
     $sql_details = "SELECT td.qty, td.price_at_transaction, td.subtotal, p.name 
                     FROM transaction_details td
                     JOIN products p ON td.product_id = p.id
@@ -89,21 +82,20 @@ while ($row = $result_trx->fetch_assoc()) {
         $items[] = [
             'name' => $d['name'],
             'qty' => $d['qty'],
-            'price' => $d['price_at_transaction'], // Harga saat transaksi terjadi
+            'price' => $d['price_at_transaction'], 
             'subtotal' => $d['subtotal']
         ];
     }
 
-    // Susun data agar sesuai dengan format yang dibutuhkan Frontend/JS
     $transactions[] = [
         'id' => $row['id'],
-        'code' => $row['invoice_code'], // Sesuai DB: invoice_code
-        'time' => date('H:i', strtotime($row['date'])), // Format jam dari timestamp
+        'code' => $row['invoice_code'], 
+        'time' => date('H:i', strtotime($row['date'])), 
         'full_date' => $row['date'],
         'total' => $row['total_price'],
         'pay' => $row['cash_amount'],
         'change' => $row['change_amount'],
-        'payment_method' => 'Tunai', // Default Tunai karena DB hanya simpan cash_amount
+        'payment_method' => 'Tunai', 
         'items' => $items
     ];
 }
@@ -308,7 +300,7 @@ while ($row = $result_trx->fetch_assoc()) {
     <script>
         const formatRupiah = (num) => 'Rp ' + parseInt(num).toLocaleString('id-ID');
         
-        // --- TAMBAHAN BARU: Variabel Global untuk menyimpan ID transaksi yang sedang dibuka ---
+        // TAMBAHAN BARU: Variabel Global untuk menyimpan ID transaksi yang sedang dibuka
         let currentTrxId = null; 
 
         function showDetail(trx) {
@@ -316,7 +308,7 @@ while ($row = $result_trx->fetch_assoc()) {
             const content = document.getElementById('detailContent');
             const itemsContainer = document.getElementById('modalItems');
 
-            // --- TAMBAHAN BARU: Simpan ID Transaksi ---
+            // TAMBAHAN BARU: Simpan ID Transaksi
             currentTrxId = trx.id; 
 
             // Set Header Data
@@ -365,7 +357,7 @@ while ($row = $result_trx->fetch_assoc()) {
             }, 300);
         }
 
-        // --- UPDATE FUNGSI PRINT ---
+        // UPDATE FUNGSI PRINT 
         function printReceipt() {
             if (currentTrxId) {
                 // Buka tab baru ke file cetak_struk.php dengan membawa ID transaksi
@@ -375,7 +367,6 @@ while ($row = $result_trx->fetch_assoc()) {
             }
         }
 
-        // Close events
         document.getElementById('detailModal').addEventListener('click', (e) => {
             if (e.target === document.getElementById('detailModal')) closeModal();
         });

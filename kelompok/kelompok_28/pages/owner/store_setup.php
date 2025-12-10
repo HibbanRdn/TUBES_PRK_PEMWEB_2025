@@ -1,6 +1,5 @@
 <?php 
 // FILE: store_setup.php
-// Memanggil Backend Logic
 require_once '../../process/process_store_setup.php'; 
 ?>
 

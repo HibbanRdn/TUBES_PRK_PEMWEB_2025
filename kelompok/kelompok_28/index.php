@@ -1,6 +1,5 @@
 <?php
 session_start();
-// Cek jika user sudah login, langsung lempar ke dashboard
 if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
     header("Location: pages/dashboard.php");
     exit;
@@ -42,7 +41,6 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
     </script>
     
     <style>
-        /* Menggunakan Style yang sama persis dengan Login Page */
         @keyframes float {
             0%, 100% { transform: translateY(0px) rotate(0deg); }
             50% { transform: translateY(-20px) rotate(5deg); }
@@ -94,7 +92,6 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
             background-size: 30px 30px;
         }
 
-        /* Abstract Shapes untuk Background */
         .blob {
             position: absolute;
             filter: blur(50px);

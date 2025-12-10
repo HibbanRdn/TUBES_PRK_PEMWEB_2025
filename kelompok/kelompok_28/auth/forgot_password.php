@@ -1,7 +1,7 @@
 <?php
 // auth/forgot_password.php
 session_start();
-// Redirect jika sudah login
+// Redirect 
 if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
     header("Location: ../pages/dashboard.php");
     exit;
@@ -180,18 +180,14 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
 </head>
 <body class="bg-gradient-to-br from-gray-50 to-blue-50 h-screen w-full flex overflow-hidden">
 
-    <!-- Left Panel - Security Info -->
     <div class="hidden md:flex w-2/5 bg-gradient-to-br from-brand-900 via-brand-800 to-brand-900 flex-col justify-between p-12 relative overflow-hidden">
-        <!-- Animated Background Pattern -->
         <div class="absolute inset-0 pattern-dots"></div>
         
-        <!-- Floating Shapes -->
         <div class="absolute inset-0">
             <div class="floating-shape shape-1"></div>
             <div class="floating-shape shape-2"></div>
         </div>
         
-        <!-- Content -->
         <div class="relative z-10 animate-slideInLeft">
             <div class="mb-8">
                 <div class="w-16 h-1 bg-blue-400 mb-6 rounded-full"></div>
@@ -206,7 +202,6 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
                 </p>
             </div>
             
-            <!-- Security Features -->
             <div class="space-y-4 mt-12">
                 <div class="flex items-start space-x-3 animate-fadeInUp" style="animation-delay: 0.2s;">
                     <div class="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -246,7 +241,6 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
             </div>
         </div>
 
-        <!-- Footer -->
         <div class="relative z-10 flex items-center justify-between text-blue-300 text-xs">
             <span>&copy; 2025 Kelompok 28. All rights reserved.</span>
             <div class="flex space-x-4">
@@ -256,18 +250,14 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
         </div>
     </div>
 
-    <!-- Right Panel - Reset Form -->
     <div class="w-full md:w-3/5 flex flex-col justify-center items-center p-8 relative overflow-y-auto">
         
         <div class="w-full max-w-md animate-fadeInUp">
             
-            <!-- Security Shield Icon -->
             <div class="flex justify-center mb-8">
                 <div class="relative">
-                    <!-- Outer Ring with Pulse -->
                     <div class="absolute inset-0 bg-brand-100 rounded-full animate-pulse-ring"></div>
                     
-                    <!-- Shield Icon -->
                     <div class="relative bg-gradient-to-br from-brand-500 to-brand-700 rounded-full p-6 shield-icon animate-float">
                         <svg class="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
@@ -276,7 +266,6 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
                 </div>
             </div>
 
-            <!-- Header -->
             <div class="text-center mb-8">
                 <h1 class="text-4xl font-bold gradient-text mb-3">Lupa Password?</h1>
                 <p class="text-gray-600 text-base">
@@ -284,7 +273,6 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
                 </p>
             </div>
 
-            <!-- Alert Messages -->
             <?php if (isset($_GET['status'])): ?>
                 
                 <?php if ($_GET['status'] == 'email_sent'): ?>
@@ -346,7 +334,6 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
 
             <?php endif; ?>
 
-            <!-- Reset Form -->
             <form action="process_forgot.php" method="POST" class="space-y-6" id="resetForm">
                 <div class="space-y-2">
                     <label for="identifier" class="block text-sm font-semibold text-gray-700">Email atau Username</label>
@@ -379,7 +366,6 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
                 </button>
             </form>
 
-            <!-- Back to Login -->
             <div class="mt-8 text-center">
                 <a href="login.php" class="inline-flex items-center text-sm font-semibold text-gray-600 hover:text-brand-600 transition-all group">
                     <svg class="h-4 w-4 mr-2 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -389,7 +375,6 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
                 </a>
             </div>
 
-            <!-- Help Section -->
             <div class="mt-8 p-5 bg-gradient-to-br from-gray-50 to-blue-50 rounded-xl border border-gray-200">
                 <div class="flex items-start space-x-3">
                     <div class="flex-shrink-0">
@@ -412,7 +397,6 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
     </div>
 
     <script>
-        // Form Submit Animation
         const resetForm = document.getElementById('resetForm');
         resetForm.addEventListener('submit', function(e) {
             const submitBtn = this.querySelector('button[type="submit"]');
@@ -420,7 +404,6 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
             submitBtn.disabled = true;
         });
         
-        // Input Focus Animation
         const identifierInput = document.getElementById('identifier');
         identifierInput.addEventListener('focus', function() {
             this.parentElement.classList.add('scale-[1.02]');
@@ -430,7 +413,6 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
             this.parentElement.classList.remove('scale-[1.02]');
         });
         
-        // Auto dismiss success message after 8 seconds
         const successAlert = document.querySelector('[role="alert"]');
         if (successAlert && successAlert.classList.contains('text-green-800')) {
             setTimeout(() => {

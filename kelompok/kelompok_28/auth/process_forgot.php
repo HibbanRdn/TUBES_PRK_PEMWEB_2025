@@ -2,7 +2,7 @@
 // auth/process_forgot.php
 session_start();
 require_once '../config/database.php';
-require_once '../config/send_email.php'; // Panggil helper email
+require_once '../config/send_email.php'; 
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
@@ -42,7 +42,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     if (sendResetEmail($input, $fullname, $token)) {
                         header("Location: forgot_password.php?status=email_sent&email=" . urlencode($input));
                     } else {
-                        header("Location: forgot_password.php?status=error_sending"); // Error SMTP
+                        header("Location: forgot_password.php?status=error_sending"); 
                     }
                     exit;
                 }
@@ -55,8 +55,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } 
     // --- CEK STAFF (Username) ---
     else {
-        // ... (Kode cek staff sama seperti sebelumnya) ...
-        // Copy paste logika staff dari jawaban sebelumnya disini
         $sql = "SELECT id FROM employees WHERE username = ?";
         if ($stmt = mysqli_prepare($conn, $sql)) {
             mysqli_stmt_bind_param($stmt, "s", $input);

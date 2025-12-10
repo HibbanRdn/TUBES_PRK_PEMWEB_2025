@@ -1,7 +1,5 @@
 <?php
 // FILE: cetak_laporan.php
-
-// 1. KONEKSI DATABASE
 $host = "localhost";
 $user = "root"; 
 $pass = "";     
@@ -12,15 +10,11 @@ if ($conn->connect_error) {
     die("Koneksi gagal: " . $conn->connect_error);
 }
 
-// Matikan display error agar tidak merusak output PDF saat live
-// error_reporting(0); 
-// Tapi untuk debugging saat ini, biarkan menyala:
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// 2. SETUP DATA
 session_start();
-$store_id = $_SESSION['store_id'] ?? 1; // Default 1 jika testing
+$store_id = $_SESSION['store_id'] ?? 1; 
 
 // Filter Tanggal
 $start_date = $_GET['start'] ?? date('Y-m-01');
@@ -35,8 +29,7 @@ $store_data = $stmt->get_result()->fetch_assoc();
 
 if (!$store_data) die("Data toko tidak ditemukan.");
 
-// 3. PANGGIL LIBRARY FPDF
-// Pastikan path ini benar sesuai struktur folder Anda
+// PANGGIL LIBRARY FPDF
 require('../../library/fpdf.php');
 
 class PDF extends FPDF {
@@ -143,7 +136,7 @@ if ($result->num_rows > 0) {
         $grand_total += $row['total_price'];
     }
 
-    // --- BARIS TOTAL ---
+    // BARIS TOTAL
     $pdf->SetFont('Arial', 'B', 10);
     $pdf->SetFillColor(255, 255, 200); // Kuning Muda
     
@@ -154,7 +147,6 @@ if ($result->num_rows > 0) {
     $pdf->Cell(45, 10, 'Rp ' . number_format($grand_total, 0, ',', '.') . '   ', 1, 1, 'R', true);
 
 } else {
-    // Jika kosong
     $pdf->Ln(5);
     $pdf->SetFont('Arial', 'I', 10);
     $pdf->Cell(190, 15, 'Belum ada transaksi pada periode ini.', 1, 1, 'C');
@@ -180,18 +172,14 @@ $pdf->Cell(50, 5, 'Metro, ' . $tglSekarang, 0, 1, 'C');
 $pdf->SetX(140);
 $pdf->Cell(50, 5, 'Pemilik Toko,', 0, 1, 'C');
 
-$pdf->Ln(25); // Ruang Tanda Tangan
+$pdf->Ln(25); // TTD
 
 $nama_pemilik = $_SESSION['fullname'] ?? 'Budi Santoso'; 
 
 $pdf->SetX(140);
 
-// --- PERBAIKAN UTAMA DISINI ---
-// Menggunakan parameter 'B' (Bold) di tengah.
-// Sebelumnya error karena: $pdf->SetFont('Arial', 10);
 $pdf->SetFont('Arial', 'B', 10); 
 $pdf->Cell(50, 5, '( ' . $nama_pemilik . ' )', 0, 1, 'C');
 
-// Output
 $pdf->Output('I', 'Laporan_DigiNiaga.pdf');
 ?>

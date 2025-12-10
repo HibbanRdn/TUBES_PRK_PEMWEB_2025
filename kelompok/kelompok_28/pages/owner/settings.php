@@ -1,6 +1,5 @@
 <?php 
 // FILE: settings.php
-// Memanggil logika backend untuk memproses data dan mengambil variabel ($owner, $store, dll)
 require_once '../../process/process_settings.php'; 
 ?>
 

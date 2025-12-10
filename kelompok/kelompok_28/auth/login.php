@@ -1,5 +1,6 @@
 <?php
 session_start();
+// Redirect
 if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
     header("Location: ../redirect.php");
     exit;

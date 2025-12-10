@@ -2,9 +2,6 @@
 // FILE: reports.php
 require_once '../../process/process_reports.php'; 
 
-// Pastikan variabel tanggal tersedia dari process_reports.php
-// Jika di process_reports.php variabelnya berbeda, sesuaikan di sini.
-// Biasanya logic-nya: jika dropdown dipilih, $start_date & $end_date terisi.
 $link_cetak = "cetak_laporan.php?start=" . ($start_date ?? date('Y-m-01')) . "&end=" . ($end_date ?? date('Y-m-d'));
 ?>
 
